@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <LangVersion>10</LangVersion>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <AssemblyName>WaitAndChillReborn</AssemblyName>
