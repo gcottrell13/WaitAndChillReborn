@@ -12,9 +12,9 @@
 
         public string RoundIsBeingStarted { get; private set; } = "Round is being started";
 
-        public string OneSecondRemain { get; private set; } = "second remain";
+        public string OneSecondRemain { get; private set; } = "second remains";
 
-        public string XSecondsRemains { get; private set; } = "seconds remains";
+        public string XSecondsRemains { get; private set; } = "seconds remain";
 
         public string OnePlayerConnected { get; private set; } = "player has connected";
 

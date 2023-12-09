@@ -24,6 +24,7 @@
     using Player = Exiled.API.Features.Player;
     using Scp106Event = Exiled.Events.Handlers.Scp106;
     using Server = Exiled.API.Features.Server;
+    using Exiled.Events.EventArgs.Server;
 
     internal static class EventHandlers
     {
@@ -50,6 +51,7 @@
             Scp106Event.Teleporting += OnDeniableEvent;
 
             ServerEvent.RoundStarted += OnRoundStarted;
+            ServerEvent.ChoosingStartTeamQueue += OnChoosingStartTeamQueue;
         }
 
         internal static void UnRegisterEvents()
@@ -75,26 +77,40 @@
             Scp106Event.Teleporting -= OnDeniableEvent;
 
             ServerEvent.RoundStarted -= OnRoundStarted;
+            ServerEvent.ChoosingStartTeamQueue -= OnChoosingStartTeamQueue;
+        }
+
+        private static void OnChoosingStartTeamQueue(ChoosingStartTeamQueueEventArgs arg)
+        {
+            foreach (var q in arg.TeamRespawnQueue)
+            {
+                Log.Debug(System.Enum.GetName(typeof(PlayerRoles.Team), q));
+            }
+            
         }
 
         private static void OnWaitingForPlayers()
         {
+            Log.Warn("Waiting players");
             if (!WaitAndChillReborn.Singleton.Config.DisplayWaitingForPlayersScreen)
                 GameObject.Find("StartRound").transform.localScale = Vector3.zero;
 
             if (LobbyTimer.IsRunning)
                 Timing.KillCoroutines(LobbyTimer);
 
-            if (Server.FriendlyFire)
-                FriendlyFireConfig.PauseDetector = true;
+            //if (Server.FriendlyFire)
+            //    FriendlyFireConfig.PauseDetector = true;
 
             if (WaitAndChillReborn.Singleton.Config.DisplayWaitMessage)
                 LobbyTimer = Timing.RunCoroutine(Methods.LobbyTimer());
 
+            Log.Warn("Clear turned players");
             Scp173Role.TurnedPlayers.Clear();
             Scp096Role.TurnedPlayers.Clear();
 
-            Timing.CallDelayed(0.1f, Methods.SetupAvailablePositions);
+            Log.Warn("Setting up Timing for SetupAvailablePositions");
+            // Timing.CallDelayed(0.1f, );
+            Methods.SetupAvailablePositions();
 
             Timing.CallDelayed(
                 1f,
@@ -154,13 +170,11 @@
             if (RoundStart.singleton.NetworkTimer <= 1 && RoundStart.singleton.NetworkTimer != -2)
                 return;
 
-            ev.Player.Position = Config.MultipleRooms switch
+            ev.Player.Teleport(Config.MultipleRooms switch
             {
                 true => LobbyAvailableSpawnPoints[Random.Range(0, LobbyAvailableSpawnPoints.Count)],
                 false => LobbyChoosedSpawnPoint
-            };
-
-            _ = !Config.MultipleRooms ? ev.Player.Position = LobbyChoosedSpawnPoint : ev.Player.Position = LobbyAvailableSpawnPoints[Random.Range(0, LobbyAvailableSpawnPoints.Count)];
+            });
 
             Timing.CallDelayed(
                 0.3f,
@@ -204,11 +218,11 @@
                 Config.SpawnDelay * 2.5f,
                 () =>
                 {
-                    ev.Player.Position = Config.MultipleRooms switch
+                    ev.Player.Teleport(Config.MultipleRooms switch
                     {
                         true => LobbyAvailableSpawnPoints[Random.Range(0, LobbyAvailableSpawnPoints.Count)],
                         false => LobbyChoosedSpawnPoint
-                    };
+                    });
 
                     foreach (KeyValuePair<EffectType, byte> effect in Config.LobbyEffects)
                     {
@@ -230,6 +244,7 @@
 
         private static void OnRoundStarted()
         {
+            Log.Info("Round started");
             foreach (ThrownProjectile throwable in Object.FindObjectsOfType<ThrownProjectile>())
             {
                 if (throwable.TryGetComponent(out Rigidbody rb) && rb.velocity.sqrMagnitude <= 1f)
@@ -248,8 +263,8 @@
                 Scp173Role.TurnedPlayers.Clear();
             }
 
-            if (Server.FriendlyFire)
-                FriendlyFireConfig.PauseDetector = false;
+            //if (Server.FriendlyFire)
+            //    FriendlyFireConfig.PauseDetector = false;
 
             Methods.Scp079sDoors(false);
 
