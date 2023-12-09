@@ -10,14 +10,31 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+
   <ItemGroup>
-    <Reference Include="UnityEngine" HintPath="$(EXILED_REFERENCES)\UnityEngine.dll" />
-    <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" HintPath="$(EXILED_REFERENCES)\UnityEngine.AnimationModule.dll" SpecificVersion="False" />
-    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" SpecificVersion="False" HintPath="$(EXILED_REFERENCES)\UnityEngine.CoreModule.dll" />
-    <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" SpecificVersion="False" HintPath="$(EXILED_REFERENCES)\UnityEngine.AssetBundleModule.dll" />
-    <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" SpecificVersion="False" HintPath="$(EXILED_REFERENCES)\UnityEngine.PhysicsModule.dll" />
-    <Reference Include="Mirror" HintPath="$(EXILED_REFERENCES)\Mirror.dll" />
-    <Reference Include="Assembly-CSharp-firstpass" HintPath="$(EXILED_REFERENCES)\Assembly-CSharp-firstpass.dll" />
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>$(EXILED_REFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="Mirror">
+      <HintPath>$(EXILED_REFERENCES)\Mirror.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(EXILED_REFERENCES)\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(EXILED_REFERENCES)\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>..\..\..\scpslfiles\SCPSL_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
