@@ -4,7 +4,11 @@
 
     public sealed class Translation : ITranslation
     {
+        public string RoundCount { get; private set; } = "<size=60>Round {rounds}</size>";
+
         public string TopMessage { get; private set; } = "<size=40><color=yellow><b>The game will be starting soon, {seconds}</b></color></size>";
+
+        public string WaitingForReadyCheck { get; private set; } = "<size=40><color=yellow>Waiting for players to leave C-D: {readyCount} / {players}</color></size>";
 
         public string BottomMessage { get; private set; } = "<size=30><i>{players}</i></size>";
 

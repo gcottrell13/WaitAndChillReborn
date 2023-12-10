@@ -13,6 +13,13 @@
 
         public static CoroutineHandle LobbyTimer;
 
+        public static CoroutineHandle ReadyCheckHandle;
+
+        // should be null if not using ReadyCheck
+        public static Room ReadyCheckLockedDownRoom;
+
+        public static int ReadyPlayers;
+
         public static bool IsLobby => !Round.IsStarted && !Round.IsEnded;
     }
 }

@@ -44,6 +44,9 @@
             RoleTypeId.Tutorial,
         };
 
+        [Description("Use the Ready Check system to start the lobby. The Lobby room will become the room outside of CD Spawn.")]
+        public bool UseReadyCheck { get; private set; } = true;
+
         [Description("List of items given to a player while in lobby: (supports CustomItems)")]
         public List<string> Inventory { get; private set; } = new()
         {

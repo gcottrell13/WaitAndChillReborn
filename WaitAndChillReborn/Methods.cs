@@ -27,22 +27,30 @@ namespace WaitAndChillReborn
                     for (int i = WaitAndChillReborn.Singleton.Config.HintVertPos; i < 0; i++)
                         stringBuilder.Append("\n");
 
-                stringBuilder.Append(Translation.TopMessage);
-                stringBuilder.Append($"\n{Translation.BottomMessage}");
-
-                short networkTimer = GameCore.RoundStart.singleton.NetworkTimer;
-
-                switch (networkTimer)
+                if (WaitAndChillReborn.Singleton.Config.LobbyConfig.UseReadyCheck && ReadyPlayers < Player.List.Count)
                 {
-                    case -2: stringBuilder.Replace("{seconds}", Translation.ServerIsPaused); break;
+                    stringBuilder.Append("\n" + Translation.WaitingForReadyCheck);
+                    stringBuilder.Replace("{readyCount}", ReadyPlayers.ToString());
+                }
+                else
+                {
+                    stringBuilder.Append("\n" + Translation.TopMessage);
+                    stringBuilder.Append("\n" + Translation.BottomMessage);
 
-                    case -1: stringBuilder.Replace("{seconds}", Translation.RoundIsBeingStarted); break;
+                    short networkTimer = GameCore.RoundStart.singleton.NetworkTimer;
 
-                    case 1: stringBuilder.Replace("{seconds}", $"{networkTimer} {Translation.OneSecondRemain}"); break;
+                    switch (networkTimer)
+                    {
+                        case -2: stringBuilder.Replace("{seconds}", Translation.ServerIsPaused); break;
 
-                    case 0: stringBuilder.Replace("{seconds}", Translation.RoundIsBeingStarted); break;
+                        case -1: stringBuilder.Replace("{seconds}", Translation.RoundIsBeingStarted); break;
 
-                    default: stringBuilder.Replace("{seconds}", $"{networkTimer} {Translation.XSecondsRemains}"); break;
+                        case 1: stringBuilder.Replace("{seconds}", $"{networkTimer} {Translation.OneSecondRemain}"); break;
+
+                        case 0: stringBuilder.Replace("{seconds}", Translation.RoundIsBeingStarted); break;
+
+                        default: stringBuilder.Replace("{seconds}", $"{networkTimer} {Translation.XSecondsRemains}"); break;
+                    }
                 }
 
                 if (Player.List.Count == 1)
@@ -72,6 +80,63 @@ namespace WaitAndChillReborn
             }
         }
 
+        internal static IEnumerator<float> ReadyCheck()
+        {
+            while (!Round.IsStarted)
+            {
+                ReadyPlayers = 0;
+                var numPlayers = Player.List.Count;
+                foreach (var player in Player.List)
+                {
+                    if (player.CurrentRoom == null) continue;
+                    if (player.CurrentRoom.RoomName != MapGeneration.RoomName.LczClassDSpawn)
+                    {
+                        ReadyPlayers++; 
+                    }
+                }
+
+                Log.Debug($"{ReadyPlayers} / {numPlayers} players are ready");
+
+                if (ReadyPlayers < numPlayers)
+                {
+                    Round.IsLobbyLocked = true;
+                }
+                else
+                {
+                    Round.IsLobbyLocked = false;
+                }
+
+                yield return Timing.WaitForSeconds(1f);
+            }
+        }
+
+        internal static void SetupReadyCheckPositions()
+        {
+            LobbyAvailableSpawnPoints.Clear();
+            Log.Error("Setting up available positions");
+
+            Log.Debug("UseReadyCheck");
+            var cdSpawn = Room.Get(RoomType.LczClassDSpawn);
+            Log.Debug("UseReadyCheck found class d spawn room");
+            foreach (var door in cdSpawn.Doors)
+            {
+                door.IsOpen = true;
+                if (door.Rooms.Count == 1)
+                {
+                    LobbyAvailableSpawnPoints.Add(door.Position + Vector3.up);
+                    Log.Debug("UseReadyCheck added class d door as lobby spawn point");
+                    continue;
+                }
+                Log.Debug("UseReadyCheck door with more than one room, locking down other room");
+                var otherRoom = door.Rooms.First(room => room.RoomName != MapGeneration.RoomName.LczClassDSpawn);
+                otherRoom.LockDown(-1);
+                door.IsOpen = true;
+                ReadyCheckLockedDownRoom = otherRoom;
+            }
+
+            _pickSpawnPoint();
+        }
+
         internal static void SetupAvailablePositions()
         {
             LobbyAvailableSpawnPoints.Clear();
@@ -88,7 +153,6 @@ namespace WaitAndChillReborn
             if (Config.LobbyRoom.Contains("NUKE_SURFACE")) LobbyAvailableSpawnPoints.Add(new Vector3(29.69f, 991.86f, -26.7f));
 
             Log.Error("TOWER");
-
 
             Dictionary<RoomType, string> roomToString = new ()
             {
@@ -139,6 +203,11 @@ namespace WaitAndChillReborn
                 LobbyAvailableSpawnPoints.Add(position);
             }
 
+            _pickSpawnPoint();
+        }
+
+        private static void _pickSpawnPoint()
+        {
             Log.Error($"Have {LobbyAvailableSpawnPoints.Count} Spawn Points:");
             foreach (var pt in LobbyAvailableSpawnPoints)
             {
