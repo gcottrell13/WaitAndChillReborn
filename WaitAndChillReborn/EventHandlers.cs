@@ -26,6 +26,7 @@
     using Server = Exiled.API.Features.Server;
     using Exiled.Events.EventArgs.Server;
     using Exiled.API.Features;
+    using Exiled.API.Features.Items;
 
     internal static class EventHandlers
     {
@@ -282,6 +283,11 @@
                 {
                     door.IsOpen = false;
                 }
+                foreach (var pickup in ReadyCheckLockedDownRoom.Pickups)
+                {
+                    pickup.Destroy();
+                }
+                SpawnedInPlayers.Clear();
             }
 
             Methods.Scp079sDoors(false);

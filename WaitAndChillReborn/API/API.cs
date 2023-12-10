@@ -20,6 +20,9 @@
 
         public static int ReadyPlayers;
 
+        // For ReadyCheck to not flicker the message between waiting and ready
+        public static HashSet<string> SpawnedInPlayers = new();
+
         public static bool IsLobby => !Round.IsStarted && !Round.IsEnded;
     }
 }
