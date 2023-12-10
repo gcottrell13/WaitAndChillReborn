@@ -17,6 +17,13 @@ namespace WaitAndChillReborn
 
     internal static class Methods
     {
+        internal static void PrepareForNewLobby()
+        {
+            LobbyAvailableSpawnPoints.Clear();
+            AllowedInteractableDoors.Clear();
+            SpawnedInPlayers.Clear();
+        }
+
         internal static IEnumerator<float> LobbyTimer()
         {
             while (!Round.IsStarted)
@@ -90,15 +97,20 @@ namespace WaitAndChillReborn
                 {
                     if (player.CurrentRoom == null)
                     {
-                        if (player.Role.Type == RoleTypeId.Spectator && SpawnedInPlayers.Contains(player.Nickname))
+                        // the spawned players list does not actually count towards the ready check, it only serves to smooth over some weirdness
+                        // in-between game states.
+
+                        // we need to make sure we must and only count spectators that have been previously corporeal.
+                        // if we don't count spectators, then the game will never start because everyone is made into a spectator before the round starts.
+                        if (player.Role.Type == RoleTypeId.Spectator && HasSpawnedPlayer(player))
                         {
                             ReadyPlayers++;
                         }
                     }
-                    else if (player.CurrentRoom.RoomName != MapGeneration.RoomName.LczClassDSpawn)
+                    else if (player.CurrentRoom.RoomName != MapGeneration.RoomName.LczClassDSpawn && player.Role.Type != RoleTypeId.Spectator)
                     {
                         ReadyPlayers++;
-                        SpawnedInPlayers.Add(player.Nickname);
+                        AddSpawnedPlayer(player);
                     }
                 }
 
@@ -119,7 +131,6 @@ namespace WaitAndChillReborn
 
         internal static void SetupReadyCheckPositions()
         {
-            LobbyAvailableSpawnPoints.Clear();
             Log.Error("Setting up available positions");
 
             Log.Debug("UseReadyCheck");
@@ -130,17 +141,15 @@ namespace WaitAndChillReborn
                 Log.Debug("UseReadyCheck found class d spawn room");
                 foreach (var door in cdSpawn.Doors)
                 {
+                    AllowedInteractableDoors.Add(door);
                     if (door.Rooms.Count == 1)
                     {
-                        door.ChangeLock(DoorLockType.None);
                         LobbyAvailableSpawnPoints.Add(door.Position + Vector3.up);
                         Log.Debug("UseReadyCheck added class d door as lobby spawn point");
                         continue;
                     }
                     Log.Debug("UseReadyCheck door with more than one room, locking down other room");
                     var otherRoom = door.Rooms.First(room => room.RoomName != MapGeneration.RoomName.LczClassDSpawn);
-                    otherRoom.LockDown(-1);
-                    door.IsOpen = true;
                     ReadyCheckLockedDownRoom = otherRoom;
                 }
             }
@@ -150,7 +159,6 @@ namespace WaitAndChillReborn
 
         internal static void SetupAvailablePositions()
         {
-            LobbyAvailableSpawnPoints.Clear();
             Log.Error("Setting up available positions");
 
             for (int i = 0; i < Config.LobbyRoom.Count; i++)

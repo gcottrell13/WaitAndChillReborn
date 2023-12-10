@@ -1,6 +1,7 @@
 ﻿namespace WaitAndChillReborn.API
 {
     using Exiled.API.Features;
+    using Exiled.API.Features.Doors;
     using MEC;
     using System.Collections.Generic;
     using UnityEngine;
@@ -21,8 +22,15 @@
         public static int ReadyPlayers;
 
         // For ReadyCheck to not flicker the message between waiting and ready
-        public static HashSet<string> SpawnedInPlayers = new();
+        public static HashSet<uint> SpawnedInPlayers = new();
 
         public static bool IsLobby => !Round.IsStarted && !Round.IsEnded;
+
+        public static HashSet<Door> AllowedInteractableDoors = new();
+
+
+        public static void AddSpawnedPlayer(Player player) => SpawnedInPlayers.Add(player.NetId);
+        public static bool HasSpawnedPlayer(Player player) => SpawnedInPlayers.Contains(player.NetId);
+        public static bool RemoveSpawnedPlayer(Player player) => SpawnedInPlayers.Remove(player.NetId);
     }
 }

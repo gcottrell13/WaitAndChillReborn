@@ -23,10 +23,11 @@
     using MapEvent = Exiled.Events.Handlers.Map;
     using Player = Exiled.API.Features.Player;
     using Scp106Event = Exiled.Events.Handlers.Scp106;
-    using Server = Exiled.API.Features.Server;
     using Exiled.Events.EventArgs.Server;
     using Exiled.API.Features;
-    using Exiled.API.Features.Items;
+    using System.Linq;
+    using System.Runtime.CompilerServices;
+    using PluginAPI.Events;
 
     internal static class EventHandlers
     {
@@ -35,16 +36,18 @@
             ServerEvent.WaitingForPlayers += OnWaitingForPlayers;
 
             PlayerEvent.Verified += OnVerified;
+            PlayerEvent.Left += OnPlayerLeft;
             PlayerEvent.Spawned += OnSpawned;
             PlayerEvent.Dying += OnDying;
             PlayerEvent.Died += OnDied;
+            PlayerEvent.Hurting += OnHurt;
 
             MapEvent.PlacingBlood += OnDeniableEvent;
             PlayerEvent.SpawningRagdoll += OnDeniableEvent;
             PlayerEvent.IntercomSpeaking += OnDeniableEvent;
             PlayerEvent.DroppingItem += OnDeniableEvent;
             PlayerEvent.DroppingAmmo += OnDeniableEvent;
-            PlayerEvent.InteractingDoor += OnDeniableEvent;
+            PlayerEvent.InteractingDoor += OnInteractingDoor;
             PlayerEvent.InteractingElevator += OnDeniableEvent;
             PlayerEvent.InteractingLocker += OnDeniableEvent;
             PlayerEvent.FlippingCoin += OnCoinFlip;
@@ -62,16 +65,18 @@
             ServerEvent.WaitingForPlayers -= OnWaitingForPlayers;
 
             PlayerEvent.Verified -= OnVerified;
+            PlayerEvent.Left -= OnPlayerLeft;
             PlayerEvent.Spawned -= OnSpawned;
             PlayerEvent.Dying -= OnDying;
             PlayerEvent.Died -= OnDied;
+            PlayerEvent.Hurting -= OnHurt;
 
             MapEvent.PlacingBlood -= OnDeniableEvent;
             PlayerEvent.SpawningRagdoll -= OnDeniableEvent;
             PlayerEvent.IntercomSpeaking -= OnDeniableEvent;
             PlayerEvent.DroppingItem -= OnDeniableEvent;
             PlayerEvent.DroppingAmmo -= OnDeniableEvent;
-            PlayerEvent.InteractingDoor -= OnDeniableEvent;
+            PlayerEvent.InteractingDoor -= OnInteractingDoor;
             PlayerEvent.InteractingElevator -= OnDeniableEvent;
             PlayerEvent.InteractingLocker -= OnDeniableEvent;
             PlayerEvent.FlippingCoin -= OnCoinFlip;
@@ -86,7 +91,7 @@
 
         private static void OnCoinFlip(FlippingCoinEventArgs @event)
         {
-            if (IsLobby && ReadyCheckHandle.IsRunning == false && WaitAndChillReborn.Singleton.Config.LobbyConfig.UseReadyCheck)
+            if (IsLobby && ReadyCheckHandle.IsRunning == false && Config.UseReadyCheck)
             {
                 ReadyCheckHandle = Timing.RunCoroutine(Methods.ReadyCheck());
             }
@@ -94,16 +99,42 @@
 
         private static void OnChoosingStartTeamQueue(ChoosingStartTeamQueueEventArgs arg)
         {
-            foreach (var q in arg.TeamRespawnQueue)
-            {
-                Log.Debug(System.Enum.GetName(typeof(PlayerRoles.Team), q));
-            }
+            //foreach (var q in arg.TeamRespawnQueue)
+            //{
+            //    Log.Debug(System.Enum.GetName(typeof(PlayerRoles.Team), q));
+            //}
             
+        }
+
+        private static void OnHurt(HurtingEventArgs @event)
+        {
+            void shouldSendHint(bool condition, [CallerArgumentExpression("condition")] string message = null)
+            {
+                if (@event.Attacker?.Role.Team == PlayerRoles.Team.SCPs && condition)
+                {
+                    @event.Attacker.Broadcast(new()
+                    {
+                        Content= $"SCPs can no longer hurt lobby players.\nReason: {message}",
+                        Duration=10,
+                        Show=true,
+                    }, true);
+                    @event.IsAllowed = false;
+                }
+            }
+
+            shouldSendHint(Round.KillsByScp >= 10);
+        }
+
+        private static void OnPlayerLeft(LeftEventArgs @event)
+        {
+            RemoveSpawnedPlayer(@event.Player);
         }
 
         private static void OnWaitingForPlayers()
         {
             Log.Warn("Waiting players");
+            Methods.PrepareForNewLobby();
+
             if (!WaitAndChillReborn.Singleton.Config.DisplayWaitingForPlayersScreen)
                 GameObject.Find("StartRound").transform.localScale = Vector3.zero;
 
@@ -116,17 +147,14 @@
             if (WaitAndChillReborn.Singleton.Config.DisplayWaitMessage)
                 LobbyTimer = Timing.RunCoroutine(Methods.LobbyTimer());
 
-            if (WaitAndChillReborn.Singleton.Config.LobbyConfig.UseReadyCheck)
+            if (Config.UseReadyCheck)
                 ReadyCheckHandle = Timing.RunCoroutine(Methods.ReadyCheck());
 
             Log.Warn("Clear turned players");
             Scp173Role.TurnedPlayers.Clear();
             Scp096Role.TurnedPlayers.Clear();
 
-            Log.Warn("Setting up Timing for SetupAvailablePositions");
-            // Timing.CallDelayed(0.1f, );
-
-            if (WaitAndChillReborn.Singleton.Config.LobbyConfig.UseReadyCheck)
+            if (Config.UseReadyCheck)
             {
                 Methods.SetupReadyCheckPositions();
             }
@@ -161,6 +189,14 @@
                         }
                     }
                 });
+        }
+
+        private static void OnInteractingDoor(InteractingDoorEventArgs @event)
+        {
+            if (IsLobby && AllowedInteractableDoors.Contains(@event.Door) == false)
+            {
+                @event.IsAllowed = false;
+            }
         }
 
         private static void OnVerified(VerifiedEventArgs ev)
@@ -316,7 +352,7 @@
                     // ignored
                 }
             }
-
+            Round.KillsByScp = 0;
             LockedPickups.Clear();
         }
 
