@@ -8,7 +8,9 @@
 
         public string TopMessage { get; private set; } = "<size=40><color=yellow><b>The game will be starting soon, {seconds}</b></color></size>";
 
-        public string WaitingForReadyCheck { get; private set; } = "<size=40><color=yellow>Waiting for players to leave C-D: {readyCount} / {players}</color></size>";
+        public string ClassDReadyInstructions { get; private set; } = "<size=40><color=yellow>Leave CD-01</color></size>";
+
+        public string Lcz173ReadyInstructions { get; private set; } = "<size=40><color=yellow>Enter The Test Chamber</color></size>";
 
         public string BottomMessage { get; private set; } = "<size=30><i>{players}</i></size>";
 

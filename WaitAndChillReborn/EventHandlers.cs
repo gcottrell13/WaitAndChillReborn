@@ -195,6 +195,8 @@
         {
             if (IsLobby && AllowedInteractableDoors.Contains(@event.Door) == false)
             {
+                var rooms = string.Join(", ", @event.Door.Rooms.Select(room => room.Name).ToList());
+                Log.Debug($"Door accessed between: {rooms}");
                 @event.IsAllowed = false;
             }
         }
@@ -306,24 +308,10 @@
             //if (Server.FriendlyFire)
             //    FriendlyFireConfig.PauseDetector = false;
 
-            if (ReadyCheckLockedDownRoom != null)
+            if (Config.UseReadyCheck)
             {
-                foreach (var door in ReadyCheckLockedDownRoom.Doors)
-                {
-                    door.ChangeLock(DoorLockType.None);
-                    door.IsOpen = false;
-                }
-
-                var cdSpawn = Room.Get(RoomType.LczClassDSpawn);
-                foreach (var door in cdSpawn.Doors)
-                {
-                    door.IsOpen = false;
-                }
-                foreach (var pickup in ReadyCheckLockedDownRoom.Pickups)
-                {
-                    pickup.Destroy();
-                }
                 SpawnedInPlayers.Clear();
+                ReadyCheckRoom?.OnRoundStart();
             }
 
             Methods.Scp079sDoors(false);

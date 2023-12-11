@@ -2,6 +2,7 @@
 {
     using Exiled.API.Features;
     using Exiled.API.Features.Doors;
+    using Exiled.API.Features.Pickups;
     using MEC;
     using System.Collections.Generic;
     using UnityEngine;
@@ -16,9 +17,6 @@
 
         public static CoroutineHandle ReadyCheckHandle;
 
-        // should be null if not using ReadyCheck
-        public static Room ReadyCheckLockedDownRoom;
-
         public static int ReadyPlayers;
 
         // For ReadyCheck to not flicker the message between waiting and ready
@@ -28,9 +26,18 @@
 
         public static HashSet<Door> AllowedInteractableDoors = new();
 
+        public static IReadyCheckRoom ReadyCheckRoom;
+
 
         public static void AddSpawnedPlayer(Player player) => SpawnedInPlayers.Add(player.NetId);
         public static bool HasSpawnedPlayer(Player player) => SpawnedInPlayers.Contains(player.NetId);
         public static bool RemoveSpawnedPlayer(Player player) => SpawnedInPlayers.Remove(player.NetId);
+
+        public static void SpawnCoinInFrontOfDoor(Door door)
+        {
+            var pos = door.Position + Vector3.up + door.Rotation * Vector3.up;
+            var pickup = Pickup.CreateAndSpawn(ItemType.Coin, pos, door.Rotation);
+            pickup.Transform.localScale = 4 * Vector3.one;
+        }
     }
 }

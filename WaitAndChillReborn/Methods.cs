@@ -36,7 +36,9 @@ namespace WaitAndChillReborn
 
                 if (WaitAndChillReborn.Singleton.Config.LobbyConfig.UseReadyCheck && ReadyPlayers < Player.List.Count)
                 {
-                    stringBuilder.Append("\n" + Translation.WaitingForReadyCheck);
+                    stringBuilder.Append("Waiting for players to:");
+                    stringBuilder.Append($"\n{ReadyCheckRoom?.Instructions()}");
+                    stringBuilder.Append($"\n{{readyCount}} / {{players}}");
                     stringBuilder.Replace("{readyCount}", ReadyPlayers.ToString());
                 }
                 else
@@ -107,7 +109,7 @@ namespace WaitAndChillReborn
                             ReadyPlayers++;
                         }
                     }
-                    else if (player.CurrentRoom.RoomName != MapGeneration.RoomName.LczClassDSpawn && player.Role.Type != RoleTypeId.Spectator)
+                    else if (ReadyCheckRoom?.IsPlayerReady(player) == true && player.Role.Type != RoleTypeId.Spectator)
                     {
                         ReadyPlayers++;
                         AddSpawnedPlayer(player);
@@ -135,24 +137,15 @@ namespace WaitAndChillReborn
 
             Log.Debug("UseReadyCheck");
 
-            if (Config.LobbyRoom.Contains("ClassDSpawn"))
-            {
-                var cdSpawn = Room.Get(RoomType.LczClassDSpawn);
-                Log.Debug("UseReadyCheck found class d spawn room");
-                foreach (var door in cdSpawn.Doors)
-                {
-                    AllowedInteractableDoors.Add(door);
-                    if (door.Rooms.Count == 1)
-                    {
-                        LobbyAvailableSpawnPoints.Add(door.Position + Vector3.up);
-                        Log.Debug("UseReadyCheck added class d door as lobby spawn point");
-                        continue;
-                    }
-                    Log.Debug("UseReadyCheck door with more than one room, locking down other room");
-                    var otherRoom = door.Rooms.First(room => room.RoomName != MapGeneration.RoomName.LczClassDSpawn);
-                    ReadyCheckLockedDownRoom = otherRoom;
-                }
-            }
+            var readyCheckRooms = new List<IReadyCheckRoom>();
+
+            if (Config.LobbyRoom.Contains("ClassDSpawn")) readyCheckRooms.Add(new CD01ReadyCheck());
+            if (Config.LobbyRoom.Contains("Lcz173Spawn")) readyCheckRooms.Add(new Lcz173ReadyCheck());
+
+            Log.Debug($"SetupReadyCheckPositions has {readyCheckRooms.Count} rooms available to choose from");
+            ReadyCheckRoom = readyCheckRooms[Random.Range(0, readyCheckRooms.Count)];
+
+            ReadyCheckRoom.SetUpRoom();
 
             _pickSpawnPoint();
         }
