@@ -141,6 +141,9 @@
             if (LobbyTimer.IsRunning)
                 Timing.KillCoroutines(LobbyTimer);
 
+            if (ReadyCheckHandle.IsRunning)
+                Timing.KillCoroutines(ReadyCheckHandle);
+
             //if (Server.FriendlyFire)
             //    FriendlyFireConfig.PauseDetector = true;
 
@@ -276,6 +279,8 @@
                         0.3f,
                         () =>
                         {
+                            ReadyCheckRoom?.OnPlayerSpawn(player);
+
                             Exiled.CustomItems.API.Extensions.ResetInventory(player, Config.Inventory);
 
                             foreach (KeyValuePair<AmmoType, ushort> ammo in Config.Ammo)

@@ -152,7 +152,7 @@ namespace WaitAndChillReborn
 
         internal static void SetupAvailablePositions()
         {
-            Log.Error("Setting up available positions");
+            Log.Debug("Setting up available positions");
 
             for (int i = 0; i < Config.LobbyRoom.Count; i++)
                 Config.LobbyRoom[i] = Config.LobbyRoom[i].ToUpper();
@@ -163,8 +163,6 @@ namespace WaitAndChillReborn
             if (Config.LobbyRoom.Contains("TOWER4")) LobbyAvailableSpawnPoints.Add(new Vector3(-15.105f, 1014.461f, -31.797f));
             if (Config.LobbyRoom.Contains("TOWER5")) LobbyAvailableSpawnPoints.Add(new Vector3(44.137f, 1013.065f, -50.931f));
             if (Config.LobbyRoom.Contains("NUKE_SURFACE")) LobbyAvailableSpawnPoints.Add(new Vector3(29.69f, 991.86f, -26.7f));
-
-            Log.Error("TOWER");
 
             Dictionary<RoomType, string> roomToString = new ()
             {
@@ -181,7 +179,6 @@ namespace WaitAndChillReborn
                     LobbyAvailableSpawnPoints.Add(new Vector3(roomPos.x, roomPos.y + 2f, roomPos.z));
                 }
             }
-            Log.Error("SHELTER/GATEA/GATEB");
 
             if (Config.LobbyRoom.Contains("079"))
             {
@@ -211,7 +208,6 @@ namespace WaitAndChillReborn
                 if (position == -Vector3.one)
                     continue;
 
-                Log.Error($"Static position: {position}");
                 LobbyAvailableSpawnPoints.Add(position);
             }
 
@@ -220,10 +216,10 @@ namespace WaitAndChillReborn
 
         private static void _pickSpawnPoint()
         {
-            Log.Error($"Have {LobbyAvailableSpawnPoints.Count} Spawn Points:");
+            Log.Debug($"Have {LobbyAvailableSpawnPoints.Count} Spawn Points:");
             foreach (var pt in LobbyAvailableSpawnPoints)
             {
-                Log.Error(pt.ToString());
+                Log.Debug(pt.ToString());
             }
 
             LobbyChoosedSpawnPoint = LobbyAvailableSpawnPoints[Random.Range(0, LobbyAvailableSpawnPoints.Count)];

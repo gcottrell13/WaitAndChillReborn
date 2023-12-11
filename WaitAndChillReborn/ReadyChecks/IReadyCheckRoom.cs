@@ -11,6 +11,12 @@ namespace WaitAndChillReborn
         void SetUpRoom();
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="player"></param>
+        void OnPlayerSpawn(Player player);
+
+        /// <summary>
         /// Called once per second to see if the player is ready
         /// </summary>
         /// <param name="player"></param>

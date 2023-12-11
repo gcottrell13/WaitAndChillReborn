@@ -64,5 +64,9 @@ namespace WaitAndChillReborn
         }
 
         public string Instructions() => WaitAndChillReborn.Singleton.Translation.Lcz173ReadyInstructions;
+
+        public void OnPlayerSpawn(Player player)
+        {
+        }
     }
 }
