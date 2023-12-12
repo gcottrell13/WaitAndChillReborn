@@ -1,5 +1,7 @@
 ﻿using Exiled.API.Features;
 using Exiled.API.Features.Doors;
+using Exiled.API.Features.Toys;
+using MEC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,9 @@ namespace WaitAndChillReborn
         private Room thisroom;
         private Door gate;
         private Door otherdoor;
+
+        private Primitive THE_CUBE;
+        private CoroutineHandle cubeEffect;
 
         private Vector3 behindHere;
 
@@ -50,6 +55,23 @@ namespace WaitAndChillReborn
             {
                 behindHere = new Vector3(-Math.Sign(dx), 0, 0);
             }
+
+            // ------------------------------------------------------------------------------------------
+            // THE CUBE
+
+            var cubePosition = gate.Position + behindHere * 6 + Vector3.up * 1.5f;
+            THE_CUBE = Primitive.Create(new(PrimitiveType.Cube, Color.red, cubePosition, Vector3.zero, Vector3.one * 2f, true));
+            THE_CUBE.MovementSmoothing = 60;
+
+            var effects = new Action<float>[] { PulseCube, RotateCube };
+            var effect = UnityEngine.Random.Range(0, effects.Length);
+            var action = effects[effect];
+
+            var startTime = DateTime.Now;
+            Timing.CallPeriodically(float.PositiveInfinity, 0.1f, () =>
+            {
+                action((float)(DateTime.Now - startTime).TotalSeconds);
+            });
         }
 
         public bool IsPlayerReady(Player player)
@@ -60,7 +82,8 @@ namespace WaitAndChillReborn
 
         public void OnRoundStart()
         {
-            return;
+            // THE_CUBE.UnSpawn(); // just leave it in
+            if (cubeEffect.IsRunning) Timing.KillCoroutines(cubeEffect);
         }
 
         public string Instructions() => WaitAndChillReborn.Singleton.Translation.Lcz173ReadyInstructions;
@@ -68,5 +91,21 @@ namespace WaitAndChillReborn
         public void OnPlayerSpawn(Player player)
         {
         }
+
+        private void PulseCube(float time)
+        {
+            var scale = (float)Math.Sin(time);
+            THE_CUBE.Scale = new Vector3(scale, scale, scale);
+            if (scale < 0)
+                THE_CUBE.Color = Color.LerpUnclamped(Color.blue, Color.red, -scale);
+            else
+                THE_CUBE.Color = Color.LerpUnclamped(Color.blue, Color.clear, scale);
+        }
+
+        private void RotateCube(float time)
+        {
+            THE_CUBE.Rotation = Quaternion.AngleAxis(time * 180, Vector3.up);
+        }
+
     }
 }
