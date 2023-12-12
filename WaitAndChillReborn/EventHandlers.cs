@@ -23,11 +23,13 @@
     using MapEvent = Exiled.Events.Handlers.Map;
     using Player = Exiled.API.Features.Player;
     using Scp106Event = Exiled.Events.Handlers.Scp106;
+    using Scp3114Event = Exiled.Events.Handlers.Scp3114;
     using Exiled.Events.EventArgs.Server;
     using Exiled.API.Features;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using PluginAPI.Events;
+    using Exiled.Events.EventArgs.Scp3114;
 
     internal static class EventHandlers
     {
@@ -43,7 +45,7 @@
             PlayerEvent.Hurting += OnHurt;
 
             MapEvent.PlacingBlood += OnDeniableEvent;
-            PlayerEvent.SpawningRagdoll += OnDeniableEvent;
+            PlayerEvent.SpawningRagdoll += OnSpawnRagdoll;
             PlayerEvent.IntercomSpeaking += OnDeniableEvent;
             PlayerEvent.DroppingItem += OnDeniableEvent;
             PlayerEvent.DroppingAmmo += OnDeniableEvent;
@@ -72,7 +74,7 @@
             PlayerEvent.Hurting -= OnHurt;
 
             MapEvent.PlacingBlood -= OnDeniableEvent;
-            PlayerEvent.SpawningRagdoll -= OnDeniableEvent;
+            PlayerEvent.SpawningRagdoll -= OnSpawnRagdoll;
             PlayerEvent.IntercomSpeaking -= OnDeniableEvent;
             PlayerEvent.DroppingItem -= OnDeniableEvent;
             PlayerEvent.DroppingAmmo -= OnDeniableEvent;
@@ -128,6 +130,21 @@
         private static void OnPlayerLeft(LeftEventArgs @event)
         {
             RemoveSpawnedPlayer(@event.Player);
+        }
+
+
+        private static int spawnedRagdollsFor3114 = 0;
+        private static void OnSpawnRagdoll(SpawningRagdollEventArgs @event)
+        {
+            if (!Player.List.Any(player => player.Role.Type == PlayerRoles.RoleTypeId.Scp3114))
+            {
+                @event.IsAllowed = false;
+            }
+            if (Config.Ragdoll3114Limit != -1 && spawnedRagdollsFor3114 >= Config.Ragdoll3114Limit)
+            {
+                @event.IsAllowed = false;
+            }
+            spawnedRagdollsFor3114++;
         }
 
         private static void OnWaitingForPlayers()
@@ -253,7 +270,25 @@
         {
             if (!IsLobby || (RoundStart.singleton.NetworkTimer <= 1 && RoundStart.singleton.NetworkTimer != -2))
                 return;
-            Timing.CallDelayed(Config.SpawnDelay, () => ev.Player.Role.Set(Config.RolesToChoose[Random.Range(0, Config.RolesToChoose.Count)]));
+            Timing.CallDelayed(Config.SpawnDelay, () =>
+            {
+                var rolePool = Config.RolesToChoose;
+
+                if (Config.UniqueSCPs)
+                {
+                    rolePool = rolePool.Where(role =>
+                    {
+                        if (role.GetTeam() == PlayerRoles.Team.SCPs && Player.List.Any(player => player.Role.Type == role))
+                        {
+                            return false;
+                        }
+                        return true;
+                    }).ToList();
+                }
+
+                var role = rolePool[Random.Range(0, rolePool.Count)];
+                ev.Player.Role.Set(role);
+            });
             _spawnPlayer(ev.Player, Config.SpawnDelay * 2.5f);
         }
 
@@ -346,6 +381,7 @@
                 }
             }
             Round.KillsByScp = 0;
+            spawnedRagdollsFor3114 = 0;
             LockedPickups.Clear();
         }
 
