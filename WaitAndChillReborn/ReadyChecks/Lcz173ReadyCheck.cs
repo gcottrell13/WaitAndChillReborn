@@ -42,6 +42,7 @@ namespace WaitAndChillReborn
                 }
                 LobbyAvailableSpawnPoints.Add(door.Position + Vector3.up);
                 AllowedInteractableDoors.Add(door); // this door is inside this room, this door is OK to open!
+                door.IsOpen = true;
                 otherdoor = door;
             }
 
@@ -68,7 +69,7 @@ namespace WaitAndChillReborn
             var action = effects[effect];
 
             var startTime = DateTime.Now;
-            Timing.CallPeriodically(float.PositiveInfinity, 0.1f, () =>
+            cubeEffect = Timing.CallPeriodically(float.PositiveInfinity, 0.1f, () =>
             {
                 action((float)(DateTime.Now - startTime).TotalSeconds);
             });
@@ -82,7 +83,8 @@ namespace WaitAndChillReborn
 
         public void OnRoundStart()
         {
-            // THE_CUBE.UnSpawn(); // just leave it in
+            gate.IsOpen = false;
+            THE_CUBE.UnSpawn(); // just leave it in
             if (cubeEffect.IsRunning) Timing.KillCoroutines(cubeEffect);
         }
 

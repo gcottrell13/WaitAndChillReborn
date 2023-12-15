@@ -11,7 +11,7 @@
     {
         public static Vector3 LobbyChoosedSpawnPoint;
 
-        public static List<Vector3> LobbyAvailableSpawnPoints = new();
+        public static ItemPool<Vector3> LobbyAvailableSpawnPoints = new();
 
         public static CoroutineHandle LobbyTimer;
 

@@ -5,6 +5,7 @@
     using System.ComponentModel;
     using PlayerRoles;
     using UnityEngine;
+    using global::WaitAndChillReborn.API;
 
     public sealed class LobbyConfig
     {

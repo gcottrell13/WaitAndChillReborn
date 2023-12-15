@@ -217,12 +217,9 @@ namespace WaitAndChillReborn
         private static void _pickSpawnPoint()
         {
             Log.Debug($"Have {LobbyAvailableSpawnPoints.Count} Spawn Points:");
-            foreach (var pt in LobbyAvailableSpawnPoints)
-            {
-                Log.Debug(pt.ToString());
-            }
 
-            LobbyChoosedSpawnPoint = LobbyAvailableSpawnPoints[Random.Range(0, LobbyAvailableSpawnPoints.Count)];
+            LobbyAvailableSpawnPoints.ShuffleList();
+            LobbyChoosedSpawnPoint = LobbyAvailableSpawnPoints.GetNext();
         }
 
         internal static void Scp079sDoors(bool state)

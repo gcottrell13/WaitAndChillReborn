@@ -6,7 +6,6 @@
     using Exiled.API.Enums;
     using Exiled.API.Extensions;
     using Exiled.API.Features.Pickups;
-    using Exiled.API.Features.Roles;
     using Exiled.Events.EventArgs.Interfaces;
     using Exiled.Events.EventArgs.Player;
     using GameCore;
@@ -23,16 +22,31 @@
     using MapEvent = Exiled.Events.Handlers.Map;
     using Player = Exiled.API.Features.Player;
     using Scp106Event = Exiled.Events.Handlers.Scp106;
-    using Scp3114Event = Exiled.Events.Handlers.Scp3114;
     using Exiled.Events.EventArgs.Server;
     using Exiled.API.Features;
     using System.Linq;
     using System.Runtime.CompilerServices;
-    using PluginAPI.Events;
-    using Exiled.Events.EventArgs.Scp3114;
+    using global::WaitAndChillReborn.API;
+    using PlayerRoles;
+    using Exiled.API.Features.Roles;
 
     internal static class EventHandlers
     {
+
+        private static ItemPool<RoleTypeId> _roles;
+        internal static ItemPool<RoleTypeId> RolesToChoose
+        {
+            get
+            {
+                if (_roles == null)
+                {
+                    _roles = Config.RolesToChoose.ToPool();
+                    _roles.ShuffleList();
+                }
+                return _roles;
+            }
+        }
+
         internal static void RegisterEvents()
         {
             ServerEvent.WaitingForPlayers += OnWaitingForPlayers;
@@ -93,7 +107,9 @@
 
         private static void OnCoinFlip(FlippingCoinEventArgs @event)
         {
-            if (IsLobby && ReadyCheckHandle.IsRunning == false && Config.UseReadyCheck)
+            if (!IsLobby)
+                return;
+            if (ReadyCheckHandle.IsRunning == false && Config.UseReadyCheck)
             {
                 ReadyCheckHandle = Timing.RunCoroutine(Methods.ReadyCheck());
             }
@@ -101,15 +117,19 @@
 
         private static void OnChoosingStartTeamQueue(ChoosingStartTeamQueueEventArgs arg)
         {
+            if (!IsLobby)
+                return;
             //foreach (var q in arg.TeamRespawnQueue)
             //{
             //    Log.Debug(System.Enum.GetName(typeof(PlayerRoles.Team), q));
             //}
-            
+
         }
 
         private static void OnHurt(HurtingEventArgs @event)
         {
+            if (!IsLobby)
+                return;
             void shouldSendHint(bool condition, [CallerArgumentExpression("condition")] string message = null)
             {
                 if (@event.Attacker?.Role.Team == PlayerRoles.Team.SCPs && condition)
@@ -136,15 +156,23 @@
         private static int spawnedRagdollsFor3114 = 0;
         private static void OnSpawnRagdoll(SpawningRagdollEventArgs @event)
         {
+            if (!IsLobby)
+                return;
             if (!Player.List.Any(player => player.Role.Type == PlayerRoles.RoleTypeId.Scp3114))
             {
                 @event.IsAllowed = false;
             }
-            if (Config.Ragdoll3114Limit != -1 && spawnedRagdollsFor3114 >= Config.Ragdoll3114Limit)
+            else
             {
-                @event.IsAllowed = false;
+                if (Config.Ragdoll3114Limit == -1 || spawnedRagdollsFor3114 < Config.Ragdoll3114Limit)
+                {
+                    spawnedRagdollsFor3114++;
+                }
+                else
+                {
+                    @event.IsAllowed = false;
+                }
             }
-            spawnedRagdollsFor3114++;
         }
 
         private static void OnWaitingForPlayers()
@@ -213,7 +241,9 @@
 
         private static void OnInteractingDoor(InteractingDoorEventArgs @event)
         {
-            if (IsLobby && AllowedInteractableDoors.Contains(@event.Door) == false)
+            if (!IsLobby)
+                return;
+            if (AllowedInteractableDoors.Contains(@event.Door) == false)
             {
                 var rooms = string.Join(", ", @event.Door.Rooms.Select(room => room.Name).ToList());
                 Log.Debug($"Door accessed between: {rooms}");
@@ -232,7 +262,7 @@
                     Config.SpawnDelay,
                     () =>
                     {
-                        ev.Player.Role.Set(Config.RolesToChoose[Random.Range(0, Config.RolesToChoose.Count)]);
+                        ev.Player.Role.Set(RolesToChoose.GetNext());
 
                         if (Config.TurnedPlayers)
                         {
@@ -256,14 +286,20 @@
 
         private static void OnDeniableEvent(IExiledEvent ev)
         {
-            if (IsLobby && ev is IDeniableEvent deniableEvent)
+            if (!IsLobby)
+                return;
+            if (ev is IDeniableEvent deniableEvent)
                 deniableEvent.IsAllowed = false;
         }
 
         private static void OnDying(DyingEventArgs ev)
         {
             if (IsLobby)
+            {
                 ev.Player.ClearInventory();
+                return;
+            }
+
         }
 
         private static void OnDied(DiedEventArgs ev)
@@ -272,22 +308,26 @@
                 return;
             Timing.CallDelayed(Config.SpawnDelay, () =>
             {
-                var rolePool = Config.RolesToChoose;
+                var rolePool = RolesToChoose;
 
                 if (Config.UniqueSCPs)
                 {
-                    rolePool = rolePool.Where(role =>
+                    var role = rolePool.GetNext(role =>
                     {
-                        if (role.GetTeam() == PlayerRoles.Team.SCPs && Player.List.Any(player => player.Role.Type == role))
+                        if (PlayerRolesUtils.GetTeam(role) == Team.SCPs && Player.List.Any(player => player.Role.Type == role))
                         {
                             return false;
                         }
                         return true;
-                    }).ToList();
+                    });
+                    ev.Player.Role.Set(role);
+                }
+                else
+                {
+                    var role = rolePool.GetNext();
+                    ev.Player.Role.Set(role);
                 }
 
-                var role = rolePool[Random.Range(0, rolePool.Count)];
-                ev.Player.Role.Set(role);
             });
             _spawnPlayer(ev.Player, Config.SpawnDelay * 2.5f);
         }
@@ -300,7 +340,7 @@
                 {
                     player.Teleport(Config.MultipleRooms switch
                     {
-                        true => LobbyAvailableSpawnPoints[Random.Range(0, LobbyAvailableSpawnPoints.Count)],
+                        true => LobbyAvailableSpawnPoints.GetNext(),
                         false => LobbyChoosedSpawnPoint
                     });
 
@@ -348,11 +388,8 @@
             //if (Server.FriendlyFire)
             //    FriendlyFireConfig.PauseDetector = false;
 
-            if (Config.UseReadyCheck)
-            {
-                SpawnedInPlayers.Clear();
-                ReadyCheckRoom?.OnRoundStart();
-            }
+            SpawnedInPlayers.Clear();
+            ReadyCheckRoom?.OnRoundStart();
 
             Methods.Scp079sDoors(false);
 
