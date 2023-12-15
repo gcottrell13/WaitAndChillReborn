@@ -100,6 +100,14 @@ namespace WaitAndChillReborn
             {
                 door.IsOpen = false;
             }
+
+            var cdSpawn = Room.Get(RoomType.LczClassDSpawn);
+
+            Log.Debug("UseReadyCheck found class d spawn room");
+            foreach (var cd in cdSpawn.Doors)
+            {
+                AllowedInteractableDoors.Add(cd);
+            }
         }
     }
 }

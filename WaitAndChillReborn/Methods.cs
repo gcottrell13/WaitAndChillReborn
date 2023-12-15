@@ -133,7 +133,7 @@ namespace WaitAndChillReborn
 
         internal static void SetupReadyCheckPositions()
         {
-            Log.Error("Setting up available positions");
+            Log.Debug("Setting up available Ready Check positions");
 
             Log.Debug("UseReadyCheck");
 
@@ -144,6 +144,7 @@ namespace WaitAndChillReborn
 
             Log.Debug($"SetupReadyCheckPositions has {readyCheckRooms.Count} rooms available to choose from");
             ReadyCheckRoom = readyCheckRooms[Random.Range(0, readyCheckRooms.Count)];
+            PrepareForNewLobby();
 
             ReadyCheckRoom.SetUpRoom();
 
