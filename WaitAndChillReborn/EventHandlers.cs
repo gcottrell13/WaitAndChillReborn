@@ -282,6 +282,7 @@
                 return;
 
             _spawnPlayer(ev.Player, 0.3f);
+            ev.Player.VoiceChannel = VoiceChat.VoiceChatChannel.Spectator;
         }
 
         private static void OnDeniableEvent(IExiledEvent ev)
@@ -329,6 +330,7 @@
                 }
 
             });
+
             _spawnPlayer(ev.Player, Config.SpawnDelay * 2.5f);
         }
 
@@ -356,6 +358,8 @@
                         {
                             ReadyCheckRoom?.OnPlayerSpawn(player);
 
+                            PlayerRoles.Voice.Intercom.TrySetOverride(player.ReferenceHub, true);
+
                             Exiled.CustomItems.API.Extensions.ResetInventory(player, Config.Inventory);
 
                             foreach (KeyValuePair<AmmoType, ushort> ammo in Config.Ammo)
@@ -377,7 +381,10 @@
             }
 
             foreach (Player player in Player.List)
+            {
                 player.DisableAllEffects();
+                PlayerRoles.Voice.Intercom.TrySetOverride(player.ReferenceHub, false);
+            }
 
             if (Config.TurnedPlayers)
             {
