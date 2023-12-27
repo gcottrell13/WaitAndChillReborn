@@ -91,6 +91,17 @@ namespace WaitAndChillReborn
 
         internal static IEnumerator<float> ReadyCheck()
         {
+            var colors = new[]
+            {
+                System.Drawing.Color.Red,
+                System.Drawing.Color.Blue,
+                System.Drawing.Color.Green,
+                System.Drawing.Color.Orange,
+                System.Drawing.Color.Purple,
+                System.Drawing.Color.Yellow,
+            };
+            var currentColor = 0;
+
             while (!Round.IsStarted)
             {
                 ReadyPlayers = 0;
@@ -126,6 +137,10 @@ namespace WaitAndChillReborn
                 {
                     Round.IsLobbyLocked = false;
                 }
+
+
+                var nextColor = colors[currentColor++ % colors.Length];
+                Room.Get(RoomType.Surface).Color = new Color(nextColor.R / 255f, nextColor.G / 255f, nextColor.B / 255f);
 
                 yield return Timing.WaitForSeconds(1f);
             }
