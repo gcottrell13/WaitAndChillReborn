@@ -17,11 +17,14 @@ namespace WaitAndChillReborn
 
     internal static class Methods
     {
+        private static List<Player> validPlayers => Player.List.Where(p => p.Role.Type != RoleTypeId.Overwatch).ToList();
+
         internal static void PrepareForNewLobby()
         {
             LobbyAvailableSpawnPoints.Clear();
             AllowedInteractableDoors.Clear();
             SpawnedInPlayers.Clear();
+            SpawnedPinataThisRound = false;
         }
 
         internal static IEnumerator<float> LobbyTimer()
@@ -34,7 +37,7 @@ namespace WaitAndChillReborn
                     for (int i = WaitAndChillReborn.Singleton.Config.HintVertPos; i < 0; i++)
                         stringBuilder.Append("\n");
 
-                if (WaitAndChillReborn.Singleton.Config.LobbyConfig.UseReadyCheck && ReadyPlayers < Player.List.Count)
+                if (WaitAndChillReborn.Singleton.Config.LobbyConfig.UseReadyCheck && ReadyPlayers < validPlayers.Count)
                 {
                     stringBuilder.Append("Waiting for players to:");
                     stringBuilder.Append($"\n{ReadyCheckRoom?.Instructions()}");
@@ -62,13 +65,13 @@ namespace WaitAndChillReborn
                     }
                 }
 
-                if (Player.List.Count == 1)
+                if (validPlayers.Count == 1)
                 {
                     stringBuilder.Replace("{players}", $"1 {Translation.OnePlayerConnected}");
                 }
                 else
                 {
-                    stringBuilder.Replace("{players}", $"{Player.List.Count} {Translation.XPlayersConnected}");
+                    stringBuilder.Replace("{players}", $"{validPlayers.Count} {Translation.XPlayersConnected}");
                 }
 
                 if (WaitAndChillReborn.Singleton.Config.HintVertPos != 0 && WaitAndChillReborn.Singleton.Config.HintVertPos > 0)
@@ -77,7 +80,7 @@ namespace WaitAndChillReborn
 
                 string text = NorthwoodLib.Pools.StringBuilderPool.Shared.ToStringReturn(stringBuilder);
                 
-                foreach (Player player in Player.List)
+                foreach (Player player in validPlayers)
                 {
                     if (WaitAndChillReborn.Singleton.Config.UseHints)
                         player.ShowHint(text, 1.1f);
@@ -105,8 +108,8 @@ namespace WaitAndChillReborn
             while (!Round.IsStarted)
             {
                 ReadyPlayers = 0;
-                var numPlayers = Player.List.Count;
-                foreach (var player in Player.List)
+                var numPlayers = validPlayers.Count;
+                foreach (var player in validPlayers)
                 {
                     if (player.CurrentRoom == null)
                     {
@@ -138,10 +141,10 @@ namespace WaitAndChillReborn
                     Round.IsLobbyLocked = false;
                 }
 
-
                 var nextColor = colors[currentColor++ % colors.Length];
                 Room.Get(RoomType.Surface).Color = new Color(nextColor.R / 255f, nextColor.G / 255f, nextColor.B / 255f);
 
+                doPinata();
                 yield return Timing.WaitForSeconds(1f);
             }
         }
@@ -244,6 +247,19 @@ namespace WaitAndChillReborn
 
             foreach (Door controlRoomDoor in Door.List.Where(d => (d.Transform.position - secondDoorPos).sqrMagnitude < 25f))
                 controlRoomDoor.IsOpen = state;
+        }
+
+        internal static void doPinata()
+        {
+            if (!SpawnedPinataThisRound && Scp956Pinata.TryGetInstance(out var pinata))
+            {
+                var child = Player.List.Where(p => p.TryGetEffect(EffectType.Scp559, out var effect) && effect.Intensity > 0).ToList().FirstOrDefault();
+                if (child != null)
+                {
+                    SpawnedPinataThisRound = true;
+                    pinata.SpawnBehindTarget(child.ReferenceHub);
+                }
+            }
         }
 
         private static readonly Translation Translation = WaitAndChillReborn.Singleton.Translation;

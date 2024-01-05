@@ -1,4 +1,6 @@
-﻿using Exiled.API.Features;
+﻿using Exiled.API.Enums;
+using Exiled.API.Extensions;
+using Exiled.API.Features;
 using Exiled.API.Features.Doors;
 using Exiled.API.Features.Toys;
 using MEC;
@@ -30,6 +32,9 @@ namespace WaitAndChillReborn
 
             Log.Debug($"LCZ 173 room at: {thisroom.Position}");
 
+            LobbyAvailableSpawnPoints.Add(SpawnLocationType.Inside173Armory.GetPosition());
+            LobbyAvailableSpawnPoints.Add(SpawnLocationType.Inside173Gate.GetPosition());
+
             foreach (var door in thisroom.Doors)
             {
                 if (door.Rooms.Any(room => room.RoomName != MapGeneration.RoomName.Lcz173)) continue; // this is a door to the outside, we don't want to go out there!
@@ -40,7 +45,6 @@ namespace WaitAndChillReborn
                     gate = door;
                     continue;
                 }
-                LobbyAvailableSpawnPoints.Add(door.Position + Vector3.up);
                 AllowedInteractableDoors.Add(door); // this door is inside this room, this door is OK to open!
                 door.IsOpen = true;
                 otherdoor = door;
@@ -84,7 +88,7 @@ namespace WaitAndChillReborn
         public void OnRoundStart()
         {
             gate.IsOpen = false;
-            THE_CUBE.UnSpawn(); // just leave it in
+            THE_CUBE.UnSpawn();
             if (cubeEffect.IsRunning) Timing.KillCoroutines(cubeEffect);
         }
 

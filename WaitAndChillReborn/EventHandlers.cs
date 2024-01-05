@@ -18,6 +18,7 @@
     using Log = Exiled.API.Features.Log;
     using Object = UnityEngine.Object;
     using PlayerEvent = Exiled.Events.Handlers.Player;
+    using Scp330Event = Exiled.Events.Handlers.Scp330;
     using ServerEvent = Exiled.Events.Handlers.Server;
     using MapEvent = Exiled.Events.Handlers.Map;
     using Player = Exiled.API.Features.Player;
@@ -29,6 +30,7 @@
     using global::WaitAndChillReborn.API;
     using PlayerRoles;
     using Exiled.API.Features.Roles;
+    using Exiled.Events.EventArgs.Scp330;
 
     internal static class EventHandlers
     {
@@ -58,6 +60,8 @@
             PlayerEvent.Died += OnDied;
             PlayerEvent.Hurting += OnHurt;
 
+            Scp330Event.EatenScp330 += OnEatenCandy;
+
             MapEvent.PlacingBlood += OnDeniableEvent;
             PlayerEvent.SpawningRagdoll += OnSpawnRagdoll;
             PlayerEvent.IntercomSpeaking += OnDeniableEvent;
@@ -86,6 +90,8 @@
             PlayerEvent.Dying -= OnDying;
             PlayerEvent.Died -= OnDied;
             PlayerEvent.Hurting -= OnHurt;
+
+            Scp330Event.EatenScp330 -= OnEatenCandy;
 
             MapEvent.PlacingBlood -= OnDeniableEvent;
             PlayerEvent.SpawningRagdoll -= OnSpawnRagdoll;
@@ -124,6 +130,15 @@
             //    Log.Debug(System.Enum.GetName(typeof(PlayerRoles.Team), q));
             //}
 
+        }
+
+        private static void OnEatenCandy(EatenScp330EventArgs ev)
+        {
+            if (!IsLobby) return;
+            if (ev.Candy.Kind == InventorySystem.Items.Usables.Scp330.CandyKindID.Rainbow)
+            {
+                ev.Player.EnableEffect(EffectType.Scp559, 10);
+            }
         }
 
         private static void OnHurt(HurtingEventArgs @event)
@@ -361,6 +376,7 @@
                             PlayerRoles.Voice.Intercom.TrySetOverride(player.ReferenceHub, true);
 
                             Exiled.CustomItems.API.Extensions.ResetInventory(player, Config.Inventory);
+                            player.TryAddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Rainbow);
 
                             foreach (KeyValuePair<AmmoType, ushort> ammo in Config.Ammo)
                                 player.Ammo[ammo.Key.GetItemType()] = ammo.Value;

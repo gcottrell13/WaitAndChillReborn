@@ -13,7 +13,10 @@
                 return;
 
             foreach (Exiled.API.Features.Player player in Exiled.API.Features.Player.List)
+            {
+                player.ClearInventory();
                 player.Role.Set(RoleTypeId.Spectator);
+            }
         }
     }
 }
