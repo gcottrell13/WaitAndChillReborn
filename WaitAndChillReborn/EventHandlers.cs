@@ -135,7 +135,7 @@
         private static void OnEatenCandy(EatenScp330EventArgs ev)
         {
             if (!IsLobby) return;
-            if (ev.Candy.Kind == InventorySystem.Items.Usables.Scp330.CandyKindID.Rainbow)
+            if (ev.Candy.Kind == InventorySystem.Items.Usables.Scp330.CandyKindID.Rainbow && !SpawnedPinataThisRound)
             {
                 ev.Player.EnableEffect(EffectType.Scp559, 10);
             }
