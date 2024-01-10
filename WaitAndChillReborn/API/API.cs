@@ -15,6 +15,8 @@
 
         public static bool SpawnedPinataThisRound = false;
 
+        public static Dictionary<Player, bool> GivenCandyToPlayer = new ();
+
         public static CoroutineHandle LobbyTimer;
 
         public static CoroutineHandle ReadyCheckHandle;

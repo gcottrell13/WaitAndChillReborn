@@ -23,6 +23,8 @@ namespace WaitAndChillReborn
         /// <returns></returns>
         bool IsPlayerReady(Player player);
 
+        void OnRoundPrepare();
+
         /// <summary>
         /// Clean up interactable doors and stuff
         /// </summary>

@@ -33,7 +33,7 @@ namespace WaitAndChillReborn
             Log.Debug($"LCZ 173 room at: {thisroom.Position}");
 
             LobbyAvailableSpawnPoints.Add(SpawnLocationType.Inside173Armory.GetPosition());
-            LobbyAvailableSpawnPoints.Add(SpawnLocationType.Inside173Gate.GetPosition());
+            LobbyAvailableSpawnPoints.Add(SpawnLocationType.Inside173Connector.GetPosition());
 
             foreach (var door in thisroom.Doors)
             {
@@ -85,6 +85,11 @@ namespace WaitAndChillReborn
             return playerDir.x * behindHere.x + playerDir.z * behindHere.z > 0;
         }
 
+        public void OnRoundPrepare()
+        {
+
+        }
+
         public void OnRoundStart()
         {
             gate.IsOpen = false;
@@ -96,6 +101,7 @@ namespace WaitAndChillReborn
 
         public void OnPlayerSpawn(Player player)
         {
+            GivenCandyToPlayer.Remove(player);
         }
 
         private void PulseCube(float time)

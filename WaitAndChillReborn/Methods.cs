@@ -251,6 +251,15 @@ namespace WaitAndChillReborn
 
         internal static void doPinata()
         {
+            foreach (var player in Player.List)
+            {
+                if (player.Velocity != Vector3.zero && (!GivenCandyToPlayer.TryGetValue(player, out var given) || !given))
+                {
+                    GivenCandyToPlayer[player] = true;
+                    player.TryAddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Rainbow);
+                }
+            }
+
             if (!SpawnedPinataThisRound && Scp956Pinata.TryGetInstance(out var pinata))
             {
                 var child = Player.List.Where(p => p.TryGetEffect(EffectType.Scp559, out var effect) && effect.Intensity > 0).ToList().FirstOrDefault();

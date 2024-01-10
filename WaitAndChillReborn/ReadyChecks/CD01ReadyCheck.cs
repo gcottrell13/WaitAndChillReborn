@@ -79,6 +79,10 @@ namespace WaitAndChillReborn
             {
                 pickup.Destroy();
             }
+        }
+
+        public void OnRoundPrepare()
+        {
             var cdSpawn = Room.Get(RoomType.LczClassDSpawn);
             foreach (var door in cdSpawn.Doors)
             {
@@ -107,6 +111,9 @@ namespace WaitAndChillReborn
             {
                 AllowedInteractableDoors.Add(cd);
             }
+
+            GivenCandyToPlayer[player] = true;
+            player.TryAddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Rainbow);
         }
     }
 }

@@ -111,6 +111,11 @@
             ServerEvent.ChoosingStartTeamQueue -= OnChoosingStartTeamQueue;
         }
 
+        public static void OnRoundPrepare()
+        {
+            ReadyCheckRoom?.OnRoundPrepare();
+        }
+
         private static void OnCoinFlip(FlippingCoinEventArgs @event)
         {
             if (!IsLobby)
@@ -234,6 +239,7 @@
 
                     foreach (Pickup pickup in Pickup.List)
                     {
+                        LockedPickups.Add(pickup);
                         try
                         {
                             if (!pickup.IsLocked)
@@ -243,7 +249,6 @@
                                 pickup.Base.NetworkInfo = info;
 
                                 pickup.Base.GetComponent<Rigidbody>().isKinematic = true;
-                                LockedPickups.Add(pickup);
                             }
                         }
                         catch (System.Exception)
@@ -371,12 +376,10 @@
                         0.3f,
                         () =>
                         {
-                            ReadyCheckRoom?.OnPlayerSpawn(player);
-
-                            PlayerRoles.Voice.Intercom.TrySetOverride(player.ReferenceHub, true);
-
                             Exiled.CustomItems.API.Extensions.ResetInventory(player, Config.Inventory);
-                            player.TryAddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Rainbow);
+
+                            ReadyCheckRoom?.OnPlayerSpawn(player);
+                            PlayerRoles.Voice.Intercom.TrySetOverride(player.ReferenceHub, true);
 
                             foreach (KeyValuePair<AmmoType, ushort> ammo in Config.Ammo)
                                 player.Ammo[ammo.Key.GetItemType()] = ammo.Value;
@@ -425,21 +428,34 @@
                 Timing.KillCoroutines(ReadyCheckHandle);
             }
 
-            foreach (Pickup pickup in LockedPickups)
+            foreach (var pickup in Pickup.List)
             {
-                try
+                if (LockedPickups.Contains(pickup))
                 {
-                    PickupSyncInfo info = pickup.Base.NetworkInfo;
-                    info.Locked = false;
-                    pickup.Base.NetworkInfo = info;
+                    try
+                    {
+                        PickupSyncInfo info = pickup.Base.NetworkInfo;
+                        info.Locked = false;
+                        pickup.Base.NetworkInfo = info;
 
-                    pickup.Base.GetComponent<Rigidbody>().isKinematic = false;
+                        pickup.Base.GetComponent<Rigidbody>().isKinematic = false;
+                    }
+                    catch (System.Exception)
+                    {
+                        // ignored
+                    }
                 }
-                catch (System.Exception)
+                else
                 {
-                    // ignored
+                    pickup.Destroy();
                 }
             }
+
+            foreach (var ragdoll in Ragdoll.List)
+            {
+                ragdoll.Destroy();
+            }
+
             Round.KillsByScp = 0;
             spawnedRagdollsFor3114 = 0;
             LockedPickups.Clear();
