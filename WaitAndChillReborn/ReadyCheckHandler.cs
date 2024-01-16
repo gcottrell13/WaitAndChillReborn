@@ -12,9 +12,9 @@
         {
             while (!Round.IsStarted)
             {
-                var readyPlayerCount = 0;
+                int readyPlayerCount = 0;
                 int numPlayers = validPlayers.Count;
-                foreach (var player in validPlayers)
+                foreach (Player player in validPlayers)
                 {
                     // the spawned players list does not actually count towards the ready check, it only serves to smooth over some weirdness
                     // in-between game states.

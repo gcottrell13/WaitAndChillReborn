@@ -58,10 +58,10 @@ namespace WaitAndChillReborn.API
 
         public T GetNext(Func<T, bool> predicate)
         {
-            var startIndex = index;
+            int startIndex = index;
             while (true)
             {
-                var next = GetNext();
+                T next = GetNext();
                 if (predicate(next)) return next;
                 if (index == startIndex) return default;
             }

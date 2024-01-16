@@ -3,6 +3,7 @@
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.API.Features.Doors;
+    using System.Collections.Generic;
     using System.Linq;
 
     internal class CD01Room : BaseLobbyRoom
@@ -13,7 +14,7 @@
 
         public override void SetupSpawnPoints()
         {
-            var cdDoors = ThisRoom.Doors.Where(door => door.Rooms.Count == 1).ToList();
+            List<Door> cdDoors = ThisRoom.Doors.Where(door => door.Rooms.Count == 1).ToList();
             SpawnPoints.AddRange(cdDoors.Select(door => door.Position - door.Transform.forward * 1.5f));
         }
 
@@ -21,7 +22,7 @@
         {
             base.OnPlayerSpawn(player);
 
-            var door = Door.GetClosest(player.Position, out var d);
+            Door door = Door.GetClosest(player.Position, out float d);
             if (door != null && d < 3)
             {
                 door.IsOpen = false;

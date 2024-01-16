@@ -17,7 +17,7 @@
     {
         public static void OnRoundPrepare()
         {
-            foreach (var room in LobbyAvailableRooms)
+            foreach (BaseLobbyRoom room in LobbyAvailableRooms)
                 room.OnRoundPrepare();
         }
 
@@ -105,7 +105,7 @@
                 Timing.KillCoroutines(ReadyCheckHandle);
             }
 
-            foreach (var pickup in Pickup.List)
+            foreach (Pickup pickup in Pickup.List)
             {
                 if (LockedPickups.Contains(pickup))
                 {
@@ -128,7 +128,7 @@
                 }
             }
 
-            foreach (var ragdoll in Ragdoll.List)
+            foreach (Ragdoll ragdoll in Ragdoll.List)
             {
                 if (ragdoll.Owner != null)
                     ragdoll.Destroy();

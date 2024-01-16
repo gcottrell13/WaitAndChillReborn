@@ -53,7 +53,7 @@
 
         private void PulseCube(float time)
         {
-            var scale = (float)Math.Sin(time);
+            float scale = (float)Math.Sin(time);
             THE_CUBE.Scale = new Vector3(scale, scale, scale);
             if (scale < 0)
                 THE_CUBE.Color = Color.LerpUnclamped(Color.blue, Color.red, -scale);
