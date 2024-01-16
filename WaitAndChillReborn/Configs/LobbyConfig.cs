@@ -12,7 +12,7 @@
             List of lobby rooms where players can spawn.
             Options:
                 - '{CD01ReadyRoom.Name}'
-                - '{Lcz173ReadyRoom.Name}'
+                - '{Lcz173Room.Name}'
                 - '{GateARoom.Name}'
                 - '{GateBRoom.Name}'
                 - '{Scp049Room.Name}'
@@ -21,11 +21,13 @@
                 - '{Scp939Room.Name}'
                 - '{DrivewayReadyRoom.Name}'
                 - '{TowerReadyRoom.Name}'
+                - '{WcRoom.Name}'
+                - '{GlassRoom.Name}'
             """)]
         public List<string> LobbyRoom { get; private set; } = new()
         {
             CD01ReadyRoom.Name,
-            Lcz173ReadyRoom.Name,
+            Lcz173Room.Name,
             GateARoom.Name,
             GateBRoom.Name,
             Scp049Room.Name,
@@ -34,6 +36,8 @@
             Scp939Room.Name,
             DrivewayReadyRoom.Name,
             TowerReadyRoom.Name,
+            WcRoom.Name,
+            GlassRoom.Name,
         };
 
         [Description("List of static positions where player can spawn:")]

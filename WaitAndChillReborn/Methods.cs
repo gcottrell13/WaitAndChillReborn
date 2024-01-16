@@ -84,7 +84,7 @@ namespace WaitAndChillReborn
         internal static void SetupSpawnPoints()
         {
             if (Config.LobbyRoom.Contains(CD01ReadyRoom.Name)) LobbyAvailableRooms.Add(new CD01ReadyRoom());
-            if (Config.LobbyRoom.Contains(Lcz173ReadyRoom.Name)) LobbyAvailableRooms.Add(new Lcz173ReadyRoom());
+            if (Config.LobbyRoom.Contains(Lcz173Room.Name)) LobbyAvailableRooms.Add(new Lcz173Room());
             if (Config.LobbyRoom.Contains(TowerReadyRoom.Name)) LobbyAvailableRooms.Add(new TowerReadyRoom());
             if (Config.LobbyRoom.Contains(Scp079Room.Name)) LobbyAvailableRooms.Add(new Scp079Room());
             if (Config.LobbyRoom.Contains(Scp106Room.Name)) LobbyAvailableRooms.Add(new Scp106Room());
@@ -92,6 +92,8 @@ namespace WaitAndChillReborn
             if (Config.LobbyRoom.Contains(GateARoom.Name)) LobbyAvailableRooms.Add(new GateARoom());
             if (Config.LobbyRoom.Contains(GateBRoom.Name)) LobbyAvailableRooms.Add(new GateBRoom());
             if (Config.LobbyRoom.Contains(DrivewayReadyRoom.Name)) LobbyAvailableRooms.Add(new DrivewayReadyRoom());
+            if (Config.LobbyRoom.Contains(WcRoom.Name)) LobbyAvailableRooms.Add(new WcRoom());
+            if (Config.LobbyRoom.Contains(GlassRoom.Name)) LobbyAvailableRooms.Add(new GlassRoom());
 
             if (Config.StaticLobbyPositions.Any(p => p != -Vector3.one)) LobbyAvailableRooms.Add(new StaticReadyRoom());
 

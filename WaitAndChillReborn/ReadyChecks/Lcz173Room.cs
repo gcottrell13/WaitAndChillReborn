@@ -9,7 +9,7 @@
     using System.Linq;
     using UnityEngine;
 
-    internal class Lcz173ReadyRoom : BaseReadyCheckRoom
+    internal class Lcz173Room : BaseReadyCheckRoom
     {
         public const string Name = "173";
 
