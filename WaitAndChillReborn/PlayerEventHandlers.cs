@@ -1,4 +1,4 @@
-namespace WaitAndChillReborn
+﻿namespace WaitAndChillReborn
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -174,7 +174,7 @@ namespace WaitAndChillReborn
                     }
 
                     if (Config.LobbyGlobalChat)
-                        player.VoiceChannel = VoiceChat.VoiceChatChannel.Spectator;
+                        PlayerRoles.Voice.Intercom.TrySetOverride(player.ReferenceHub, true);
 
                     foreach (KeyValuePair<AmmoType, ushort> ammo in Config.Ammo)
                         player.Ammo[ammo.Key.GetItemType()] = ammo.Value;

@@ -91,6 +91,7 @@
             foreach (Player player in Player.List)
             {
                 player.DisableAllEffects();
+                PlayerRoles.Voice.Intercom.TrySetOverride(player.ReferenceHub, false);
             }
 
             if (Server.FriendlyFire)
