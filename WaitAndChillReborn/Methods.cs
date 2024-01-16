@@ -97,9 +97,14 @@ namespace WaitAndChillReborn
 
             if (Config.StaticLobbyPositions.Any(p => p != -Vector3.one)) LobbyAvailableRooms.Add(new StaticSpawnRoom());
 
-            Log.Debug($"Added {LobbyAvailableRooms.Count} rooms");
+            Log.Debug($"Configuration has {LobbyAvailableRooms.Count} rooms");
 
-            if (!Config.MultipleRooms) LobbyAvailableRooms = new() { LobbyAvailableRooms.RandomItem() };
+            if (!Config.MultipleRooms)
+            {
+                BaseLobbyRoom chosenRoom = LobbyAvailableRooms.RandomItem();
+                Log.Warn($"Chose single room: {chosenRoom}");
+                LobbyAvailableRooms = new() { chosenRoom };
+            }
 
             foreach (BaseLobbyRoom room in LobbyAvailableRooms)
             {
