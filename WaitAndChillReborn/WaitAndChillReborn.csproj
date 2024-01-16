@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-	  <LangVersion>9</LangVersion>
+	  <LangVersion>11</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EXILED" Version="8.5.0" />
+    <PackageReference Include="EXILED" Version="8.7.0" />
     <PackageReference Include="Lib.Harmony" Version="2.2.2" />
   </ItemGroup>
 

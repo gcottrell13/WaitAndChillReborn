@@ -14,10 +14,13 @@
 
             foreach (Exiled.API.Features.Player player in Exiled.API.Features.Player.List)
             {
-                player.ClearInventory();
-                EventHandlers.OnRoundPrepare();
-                player.Role.Set(RoleTypeId.Spectator);
+                if (player.IsAlive)
+                {
+                    player.ClearInventory();
+                    player.Role.Set(RoleTypeId.Spectator);
+                }
             }
+            EventHandlers.OnRoundPrepare();
         }
     }
 }

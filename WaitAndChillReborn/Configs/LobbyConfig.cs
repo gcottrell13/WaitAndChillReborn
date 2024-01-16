@@ -5,26 +5,35 @@
     using System.ComponentModel;
     using PlayerRoles;
     using UnityEngine;
-    using global::WaitAndChillReborn.API;
 
     public sealed class LobbyConfig
     {
-        [Description("List of lobbys (rooms) where players can spawn: (list of all possible rooms can be found on plugin's GitHub)")]
+        [Description($"""
+            List of lobby rooms where players can spawn.
+            Options:
+                - '{CD01ReadyRoom.Name}'
+                - '{Lcz173ReadyRoom.Name}'
+                - '{GateARoom.Name}'
+                - '{GateBRoom.Name}'
+                - '{Scp049Room.Name}'
+                - '{Scp079Room.Name}'
+                - '{Scp106Room.Name}'
+                - '{Scp939Room.Name}'
+                - '{DrivewayReadyRoom.Name}'
+                - '{TowerReadyRoom.Name}'
+            """)]
         public List<string> LobbyRoom { get; private set; } = new()
         {
-            "TOWER1",
-            "TOWER2",
-            "TOWER3",
-            "TOWER4",
-            "GATE_A",
-            "GATE_B",
-            "SHELTER",
-            "GR18",
-            "049",
-            "079",
-            "106",
-            "173",
-            "939",
+            CD01ReadyRoom.Name,
+            Lcz173ReadyRoom.Name,
+            GateARoom.Name,
+            GateBRoom.Name,
+            Scp049Room.Name,
+            Scp079Room.Name,
+            Scp106Room.Name,
+            Scp939Room.Name,
+            DrivewayReadyRoom.Name,
+            TowerReadyRoom.Name,
         };
 
         [Description("List of static positions where player can spawn:")]
@@ -45,14 +54,25 @@
             RoleTypeId.Tutorial,
         };
 
-        [Description("Use the Ready Check system to start the lobby. The Lobby room will become the room outside of CD Spawn.")]
+        [Description("Use the Ready Check system to start the lobby. Useful for groups of friends.")]
         public bool UseReadyCheck { get; private set; } = true;
+
+        [Description("""
+            % of players that need to be ready in order to start the round.
+            Suggested values:
+            80 - 80% of players must be ready
+            100 - Everyone must be ready
+            """)]
+        public int ReadyCheckPercent { get; private set; } = 0;
 
         [Description("Limit how many ragdolls can be spawned during the lobby for SCP 3114. -1 for unlimited.")]
         public int Ragdoll3114Limit { get; private set; } = -1;
 
         [Description("Should the lobby only allow one of each SCP Role at a time")]
-        public bool UniqueSCPs { get; private set; } = true;
+        public bool UniqueScps { get; private set; } = true;
+
+        [Description("Should everyone be added to global chat during the lobby")]
+        public bool LobbyGlobalChat { get; private set; } = true;
 
         [Description("List of items given to a player while in lobby: (supports CustomItems)")]
         public List<string> Inventory { get; private set; } = new()
