@@ -39,7 +39,6 @@
             ServerEvent.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
 
             PlayerEvent.Verified += PlayerEventHandlers.OnVerified;
-            PlayerEvent.Left += PlayerEventHandlers.OnPlayerLeft;
             PlayerEvent.Spawned += PlayerEventHandlers.OnSpawned;
             PlayerEvent.Dying += PlayerEventHandlers.OnDying;
             PlayerEvent.Died += PlayerEventHandlers.OnDied;
@@ -66,7 +65,6 @@
             ServerEvent.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
 
             PlayerEvent.Verified -= PlayerEventHandlers.OnVerified;
-            PlayerEvent.Left -= PlayerEventHandlers.OnPlayerLeft;
             PlayerEvent.Spawned -= PlayerEventHandlers.OnSpawned;
             PlayerEvent.Dying -= PlayerEventHandlers.OnDying;
             PlayerEvent.Died -= PlayerEventHandlers.OnDied;

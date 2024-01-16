@@ -1,4 +1,4 @@
-﻿namespace WaitAndChillReborn
+namespace WaitAndChillReborn
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -43,9 +43,9 @@
             }
         }
 
-        public static void OnPlayerLeft(LeftEventArgs @event)
+        public static void OnPlayerLeft(LeftEventArgs ev)
         {
-            RemoveSpawnedPlayer(@event.Player);
+            ReadyPlayers.Remove(ev.Player);
         }
 
         public static void OnSpawnRagdoll(SpawningRagdollEventArgs ev)

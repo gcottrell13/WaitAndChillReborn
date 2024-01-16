@@ -31,14 +31,8 @@
 
         public static HashSet<Player> ReadyPlayers = new();
 
-        // For ReadyCheck to not flicker the message between waiting and ready
-        public static HashSet<uint> SpawnedInPlayers = new();
-
-        public static void AddSpawnedPlayer(Player player) => SpawnedInPlayers.Add(player.NetId);
-        public static bool HasSpawnedPlayer(Player player) => SpawnedInPlayers.Contains(player.NetId);
-        public static bool RemoveSpawnedPlayer(Player player) => SpawnedInPlayers.Remove(player.NetId);
-
-        public static List<Player> validPlayers => Player.List.Where(p => p.Role.Type != RoleTypeId.Overwatch).ToList();
+        // spectator is included here for all the people that are momentarily dead
+        public static List<Player> validPlayers => Player.List.Where(p => p.IsAlive || p.Role == RoleTypeId.Spectator).ToList();
 
         #endregion
 
@@ -61,7 +55,6 @@
         {
             LobbyAvailableRooms.Clear();
             AllowedInteractableDoors.Clear();
-            SpawnedInPlayers.Clear();
             IsReadyToStartGame = false;
             ReadyPlayers = new();
             Round.KillsByScp = 0;
