@@ -44,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: WaitAndChillReborn
-          path: "WaitAndChillReborn/bin/Release/WaitAndChillReborn.dll"
+          path: "WaitAndChillReborn/bin/Release/net48/WaitAndChillReborn.dll"
