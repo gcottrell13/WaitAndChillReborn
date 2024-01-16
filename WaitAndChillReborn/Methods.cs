@@ -68,7 +68,7 @@ namespace WaitAndChillReborn
 
                     if (Config.UseReadyCheck)
                     {
-                        playerText = text.Replace("{PLAYERINSTRUCTION}", ReadyPlayers.Contains(player) ? Translation.YouAreReady : FindPlayerRoom(player).Instructions());
+                        playerText = text.Replace("{PLAYERINSTRUCTION}", ReadyPlayers.Contains(player) ? Translation.YouAreReady : Translation.ToggleNoClipInstructions);
                     }
 
                     if (WaitAndChillReborn.Singleton.Config.UseHints)

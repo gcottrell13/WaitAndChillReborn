@@ -52,13 +52,6 @@
         }
 
         /// <summary>
-        /// Is the given player in this room?
-        /// </summary>
-        /// <param name="player"></param>
-        /// <returns></returns>
-        public virtual bool IsPlayerInRoom(Player player) => player.CurrentRoom?.Type == RoomType;
-
-        /// <summary>
         /// Clean up any stuff done to the room.
         /// Called when everyone is made Spectator before the round starts.
         /// </summary>
@@ -71,26 +64,6 @@
                     if (!door.IsElevator)
                         door.IsOpen = false;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Instructions on how to become ready
-        /// </summary>
-        /// <returns></returns>
-        public virtual string Instructions() => BaseToggleALTInstructions;
-
-        public static string BaseToggleALTInstructions => WaitAndChillReborn.Singleton.Translation.ToggleNoClipInstructions;
-
-        public virtual void OnToggleNoClip(Player player, bool enabled)
-        {
-            if (ReadyPlayers.Contains(player))
-            {
-                ReadyPlayers.Remove(player);
-            }
-            else
-            {
-                ReadyPlayers.Add(player);
             }
         }
     }

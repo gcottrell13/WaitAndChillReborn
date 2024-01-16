@@ -34,17 +34,6 @@
         // For ReadyCheck to not flicker the message between waiting and ready
         public static HashSet<uint> SpawnedInPlayers = new();
 
-        public static BaseLobbyRoom FindPlayerRoom(Player player)
-        {
-            foreach (var room in LobbyAvailableRooms)
-            {
-                if (room.IsPlayerInRoom(player)) return room;
-            }
-            return catchall;
-        }
-
-        public static BaseLobbyRoom catchall = new CatchallRoom();
-
         public static void AddSpawnedPlayer(Player player) => SpawnedInPlayers.Add(player.NetId);
         public static bool HasSpawnedPlayer(Player player) => SpawnedInPlayers.Contains(player.NetId);
         public static bool RemoveSpawnedPlayer(Player player) => SpawnedInPlayers.Remove(player.NetId);
@@ -73,7 +62,6 @@
             LobbyAvailableRooms.Clear();
             AllowedInteractableDoors.Clear();
             SpawnedInPlayers.Clear();
-            catchall = new CatchallRoom();
             IsReadyToStartGame = false;
             ReadyPlayers = new();
             Round.KillsByScp = 0;

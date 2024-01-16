@@ -32,7 +32,15 @@
                 return;
             if (!Config.UseReadyCheck)
                 return;
-            FindPlayerRoom(ev.Player).OnToggleNoClip(ev.Player, ev.IsEnabled);
+
+            if (ReadyPlayers.Contains(ev.Player))
+            {
+                ReadyPlayers.Remove(ev.Player);
+            }
+            else
+            {
+                ReadyPlayers.Add(ev.Player);
+            }
         }
 
         public static void OnPlayerLeft(LeftEventArgs @event)
