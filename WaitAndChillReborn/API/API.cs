@@ -11,7 +11,7 @@
 
     public static class API
     {
-        public static List<BaseReadyCheckRoom> LobbyAvailableRooms = new();
+        public static List<BaseLobbyRoom> LobbyAvailableRooms = new();
 
         public static CoroutineHandle LobbyTimer;
 
@@ -34,7 +34,7 @@
         // For ReadyCheck to not flicker the message between waiting and ready
         public static HashSet<uint> SpawnedInPlayers = new();
 
-        public static BaseReadyCheckRoom FindPlayerRoom(Player player)
+        public static BaseLobbyRoom FindPlayerRoom(Player player)
         {
             foreach (var room in LobbyAvailableRooms)
             {
@@ -43,7 +43,7 @@
             return catchall;
         }
 
-        public static BaseReadyCheckRoom catchall = new CatchallRoom();
+        public static BaseLobbyRoom catchall = new CatchallRoom();
 
         public static void AddSpawnedPlayer(Player player) => SpawnedInPlayers.Add(player.NetId);
         public static bool HasSpawnedPlayer(Player player) => SpawnedInPlayers.Contains(player.NetId);

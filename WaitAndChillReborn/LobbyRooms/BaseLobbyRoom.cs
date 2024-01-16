@@ -8,7 +8,7 @@
     using UnityEngine;
     using static API.API;
 
-    public abstract class BaseReadyCheckRoom
+    public abstract class BaseLobbyRoom
     {
         protected virtual RoomType RoomType => RoomType.Unknown;
 

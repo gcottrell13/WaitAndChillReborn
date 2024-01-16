@@ -11,7 +11,7 @@
         [Description($"""
             List of lobby rooms where players can spawn.
             Options:
-                - '{CD01ReadyRoom.Name}'
+                - '{CD01Room.Name}'
                 - '{Lcz173Room.Name}'
                 - '{GateARoom.Name}'
                 - '{GateBRoom.Name}'
@@ -19,14 +19,14 @@
                 - '{Scp079Room.Name}'
                 - '{Scp106Room.Name}'
                 - '{Scp939Room.Name}'
-                - '{DrivewayReadyRoom.Name}'
-                - '{TowerReadyRoom.Name}'
+                - '{DrivewayRoom.Name}'
+                - '{TowerRoom.Name}'
                 - '{WcRoom.Name}'
                 - '{GlassRoom.Name}'
             """)]
         public List<string> LobbyRoom { get; private set; } = new()
         {
-            CD01ReadyRoom.Name,
+            CD01Room.Name,
             Lcz173Room.Name,
             GateARoom.Name,
             GateBRoom.Name,
@@ -34,8 +34,8 @@
             Scp079Room.Name,
             Scp106Room.Name,
             Scp939Room.Name,
-            DrivewayReadyRoom.Name,
-            TowerReadyRoom.Name,
+            DrivewayRoom.Name,
+            TowerRoom.Name,
             WcRoom.Name,
             GlassRoom.Name,
         };

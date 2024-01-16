@@ -2,7 +2,7 @@
 {
     using Exiled.API.Enums;
 
-    internal class GlassRoom : BaseReadyCheckRoom
+    internal class GlassRoom : BaseLobbyRoom
     {
         public const string Name = "GR18";
 

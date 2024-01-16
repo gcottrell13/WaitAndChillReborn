@@ -5,7 +5,6 @@
     using System.Collections.Generic;
     using static API.API;
     using Exiled.API.Features;
-    using System.Linq;
 
     internal static class ReadyCheckHandler
     {
@@ -17,8 +16,6 @@
                 int numPlayers = validPlayers.Count;
                 foreach (var player in validPlayers)
                 {
-                    BaseReadyCheckRoom currentRoom = FindPlayerRoom(player);
-
                     // the spawned players list does not actually count towards the ready check, it only serves to smooth over some weirdness
                     // in-between game states.
 

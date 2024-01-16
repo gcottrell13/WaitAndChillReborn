@@ -2,7 +2,7 @@
 {
     using UnityEngine;
 
-    public class DrivewayReadyRoom : BaseReadyCheckRoom
+    public class DrivewayRoom : BaseLobbyRoom
     {
         public const string Name = "DRIVEWAY";
 

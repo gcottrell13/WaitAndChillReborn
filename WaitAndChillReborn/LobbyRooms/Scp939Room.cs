@@ -4,7 +4,7 @@
     using Exiled.API.Extensions;
     using PlayerRoles;
 
-    internal class Scp939Room : BaseReadyCheckRoom
+    internal class Scp939Room : BaseLobbyRoom
     {
         public const string Name = "939";
 

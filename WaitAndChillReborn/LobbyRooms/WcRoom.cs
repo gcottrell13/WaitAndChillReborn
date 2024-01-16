@@ -4,7 +4,7 @@
     using Exiled.API.Features.Doors;
     using System.Linq;
 
-    internal class WcRoom : BaseReadyCheckRoom
+    internal class WcRoom : BaseLobbyRoom
     {
         public const string Name = "WC";
 

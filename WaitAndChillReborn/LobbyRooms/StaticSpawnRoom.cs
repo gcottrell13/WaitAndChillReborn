@@ -3,7 +3,7 @@
     using UnityEngine;
     using static API.API;
 
-    internal class StaticReadyRoom : BaseReadyCheckRoom
+    internal class StaticSpawnRoom : BaseLobbyRoom
     {
         public override void SetupSpawnPoints()
         {

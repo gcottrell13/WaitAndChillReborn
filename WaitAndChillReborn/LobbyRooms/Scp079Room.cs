@@ -3,7 +3,7 @@
     using Exiled.API.Enums;
     using Exiled.API.Features.Doors;
 
-    internal class Scp079Room : BaseReadyCheckRoom
+    internal class Scp079Room : BaseLobbyRoom
     {
         public const string Name = "079";
 

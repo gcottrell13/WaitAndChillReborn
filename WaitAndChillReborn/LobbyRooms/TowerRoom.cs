@@ -2,7 +2,7 @@
 {
     using UnityEngine;
 
-    public class TowerReadyRoom : BaseReadyCheckRoom
+    public class TowerRoom : BaseLobbyRoom
     {
         public const string Name = "TOWER1";
 

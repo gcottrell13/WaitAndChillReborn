@@ -2,7 +2,7 @@
 {
     using Exiled.API.Enums;
 
-    internal class GateARoom : BaseReadyCheckRoom
+    internal class GateARoom : BaseLobbyRoom
     {
         public const string Name = "GATE_A";
 

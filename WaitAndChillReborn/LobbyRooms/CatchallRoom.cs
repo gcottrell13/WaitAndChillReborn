@@ -2,7 +2,7 @@
 {
     using Exiled.API.Features;
 
-    internal class CatchallRoom : BaseReadyCheckRoom
+    internal class CatchallRoom : BaseLobbyRoom
     {
         public override void SetupSpawnPoints() { }
 
