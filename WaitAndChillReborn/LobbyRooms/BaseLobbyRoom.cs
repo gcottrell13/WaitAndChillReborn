@@ -3,6 +3,7 @@
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.API.Features.Doors;
+    using Exiled.API.Features.Toys;
     using System.Collections.Generic;
     using System.Linq;
     using UnityEngine;
@@ -14,9 +15,25 @@
 
         public Room ThisRoom => Room.Get(RoomType);
 
+        /// <summary>
+        /// Gets "the" gate to/inside this room.
+        /// </summary>
         public Door Gate => ThisRoom.Doors.FirstOrDefault(door => door.IsGate);
 
+        /// <summary>
+        /// Gets all gates in this room.
+        /// </summary>
+        public List<Door> Gates => ThisRoom.Doors.Where(door => door.IsGate).ToList();
+
+        /// <summary>
+        /// Gets "the" entrance door. Use only if you're sure there is only one (or you don't care).
+        /// </summary>
         public Door Entrance => ThisRoom.Doors.FirstOrDefault(door => door.Rooms.Count > 1);
+
+        /// <summary>
+        /// Gets all entrance doors.
+        /// </summary>
+        public List<Door> Entrances => ThisRoom.Doors.Where(door => door.Rooms.Count > 1).ToList();
 
         public List<Vector3> SpawnPoints { get; } = new();
 
@@ -38,6 +55,9 @@
             SetupSpawnPoints();
         }
 
+        /// <summary>
+        /// Adds spawn points to this room
+        /// </summary>
         public abstract void SetupSpawnPoints();
 
         /// <summary>
@@ -68,5 +88,8 @@
                 }
             }
         }
+
+        // ---------------------------------------------------------------------------------------------------
+
     }
 }
