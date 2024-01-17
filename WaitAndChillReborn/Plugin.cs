@@ -43,6 +43,7 @@
             PlayerEvent.Dying += PlayerEventHandlers.OnDying;
             PlayerEvent.Died += PlayerEventHandlers.OnDied;
             PlayerEvent.TogglingNoClip += PlayerEventHandlers.OnNoclip;
+            PlayerEvent.Escaping += PlayerEventHandlers.OnEscape;
 
             MapEvent.PlacingBlood += OnDeniableEvent;
             PlayerEvent.SpawningRagdoll += PlayerEventHandlers.OnSpawnRagdoll;
@@ -69,6 +70,7 @@
             PlayerEvent.Dying -= PlayerEventHandlers.OnDying;
             PlayerEvent.Died -= PlayerEventHandlers.OnDied;
             PlayerEvent.TogglingNoClip -= PlayerEventHandlers.OnNoclip;
+            PlayerEvent.Escaping -= PlayerEventHandlers.OnEscape;
 
             MapEvent.PlacingBlood -= OnDeniableEvent;
             PlayerEvent.SpawningRagdoll -= PlayerEventHandlers.OnSpawnRagdoll;

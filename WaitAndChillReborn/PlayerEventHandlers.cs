@@ -15,8 +15,14 @@
 
     internal static class PlayerEventHandlers
     {
+        public static void OnEscape(EscapingEventArgs ev)
+        {
+            if (!IsLobby) 
+                return;
+            ev.IsAllowed = false;
+        }
 
-        public static void OnCoinFlip(FlippingCoinEventArgs @event)
+        public static void OnCoinFlip(FlippingCoinEventArgs ev)
         {
             if (!IsLobby)
                 return;

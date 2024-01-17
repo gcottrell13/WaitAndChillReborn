@@ -1,4 +1,4 @@
-﻿namespace WaitAndChillReborn.Configs
+namespace WaitAndChillReborn.Configs
 {
     using Exiled.API.Enums;
     using System.Collections.Generic;
@@ -23,6 +23,7 @@
                 - '{TowerRoom.Name}'
                 - '{WcRoom.Name}'
                 - '{GlassRoom.Name}'
+                - '{EscapeRoom.Name}'
             """)]
         public List<string> LobbyRoom { get; private set; } = new()
         {
@@ -38,6 +39,7 @@
             TowerRoom.Name,
             WcRoom.Name,
             GlassRoom.Name,
+            EscapeRoom.Name,
         };
 
         [Description("List of static positions where player can spawn:")]
