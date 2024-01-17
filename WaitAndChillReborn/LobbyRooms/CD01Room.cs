@@ -8,7 +8,7 @@
 
     internal class CD01Room : BaseLobbyRoom
     {
-        public const string Name = "CD";
+        public const string Name = "CD01";
 
         protected override RoomType RoomType => RoomType.LczClassDSpawn;
 
