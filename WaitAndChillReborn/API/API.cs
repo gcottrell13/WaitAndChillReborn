@@ -62,7 +62,7 @@
             _roles = null;
         }
 
-        public static readonly Translation Translation = WaitAndChillReborn.Singleton.Translation;
-        public static readonly LobbyConfig Config = WaitAndChillReborn.Singleton.Config.LobbyConfig;
+        public static Translation Translation => WaitAndChillReborn.Singleton.Translation;
+        public static LobbyConfig Config => WaitAndChillReborn.Singleton.Config.LobbyConfig;
     }
 }

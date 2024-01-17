@@ -16,6 +16,8 @@
 
         public Door Gate => ThisRoom.Doors.FirstOrDefault(door => door.IsGate);
 
+        public Door Entrance => ThisRoom.Doors.FirstOrDefault(door => door.Rooms.Count > 1);
+
         public List<Vector3> SpawnPoints { get; } = new();
 
         /// <summary>

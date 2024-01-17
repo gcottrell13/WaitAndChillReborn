@@ -95,6 +95,8 @@ namespace WaitAndChillReborn
             if (Config.LobbyRoom.Contains(WcRoom.Name)) LobbyAvailableRooms.Add(new WcRoom());
             if (Config.LobbyRoom.Contains(GlassRoom.Name)) LobbyAvailableRooms.Add(new GlassRoom());
             if (Config.LobbyRoom.Contains(EscapeRoom.Name)) LobbyAvailableRooms.Add(new EscapeRoom());
+            if (Config.LobbyRoom.Contains(PC15Room.Name)) LobbyAvailableRooms.Add(new PC15Room());
+            if (Config.LobbyRoom.Contains(OutsideRoom.Name)) LobbyAvailableRooms.Add(new OutsideRoom());
 
             if (Config.StaticLobbyPositions.Any(p => p != -Vector3.one)) LobbyAvailableRooms.Add(new StaticSpawnRoom());
 
