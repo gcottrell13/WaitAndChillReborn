@@ -15,21 +15,11 @@
 
     internal static class PlayerEventHandlers
     {
-        public static void OnEscape(EscapingEventArgs ev)
-        {
-            if (!IsLobby) 
-                return;
-            ev.IsAllowed = false;
-        }
-
-        public static void OnCoinFlip(FlippingCoinEventArgs ev)
+        public static void OnDisconnect(LeftEventArgs ev)
         {
             if (!IsLobby)
                 return;
-            if (ReadyCheckHandle.IsRunning == false && Config.UseReadyCheck)
-            {
-                ReadyCheckHandle = Timing.RunCoroutine(ReadyCheckHandler.ReadyCheck());
-            }
+            ReadyPlayers.Remove(ev.Player);
         }
 
         public static void OnNoclip(TogglingNoClipEventArgs ev)
@@ -58,7 +48,7 @@
         {
             if (!IsLobby)
                 return;
-            if (!Player.List.Any(player => player.Role.Type == PlayerRoles.RoleTypeId.Scp3114))
+            if (!Player.List.Any(player => player.Role.Type == RoleTypeId.Scp3114) || ev.Player.Role.Team == Team.SCPs)
             {
                 ev.IsAllowed = false;
             }

@@ -20,11 +20,12 @@ namespace WaitAndChillReborn
                     for (int i = WaitAndChillReborn.Singleton.Config.HintVertPos; i < 0; i++)
                         stringBuilder.Append("\n");
 
-                if (Config.UseReadyCheck && !IsReadyToStartGame)
+                if (Config.UseReadyCheck && !IsReadyToStartGame && validPlayers.Any(p => p.IsAlive))
                 {
+                    List<Player> ready = ReadyPlayers.Intersect(validPlayers).ToList();
                     stringBuilder.Append("\n{PLAYERINSTRUCTION}");
                     stringBuilder.Append($"\n{{readyCount}} / {{players}} are Ready");
-                    stringBuilder.Replace("{readyCount}", ReadyPlayers.Count.ToString());
+                    stringBuilder.Replace("{readyCount}", ready.Count.ToString());
                 }
                 else
                 {
@@ -87,6 +88,7 @@ namespace WaitAndChillReborn
             if (Config.LobbyRoom.Contains(Lcz173Room.Name)) LobbyAvailableRooms.Add(new Lcz173Room());
             if (Config.LobbyRoom.Contains(TowerRoom.Name)) LobbyAvailableRooms.Add(new TowerRoom());
             if (Config.LobbyRoom.Contains(Scp079Room.Name)) LobbyAvailableRooms.Add(new Scp079Room());
+            if (Config.LobbyRoom.Contains(Scp049Room.Name)) LobbyAvailableRooms.Add(new Scp049Room());
             if (Config.LobbyRoom.Contains(Scp106Room.Name)) LobbyAvailableRooms.Add(new Scp106Room());
             if (Config.LobbyRoom.Contains(Scp939Room.Name)) LobbyAvailableRooms.Add(new Scp939Room());
             if (Config.LobbyRoom.Contains(GateARoom.Name)) LobbyAvailableRooms.Add(new GateARoom());

@@ -43,9 +43,13 @@
             PlayerEvent.Dying += PlayerEventHandlers.OnDying;
             PlayerEvent.Died += PlayerEventHandlers.OnDied;
             PlayerEvent.TogglingNoClip += PlayerEventHandlers.OnNoclip;
-            PlayerEvent.Escaping += PlayerEventHandlers.OnEscape;
+            PlayerEvent.Escaping += OnDeniableEvent;
+            PlayerEvent.Left += PlayerEventHandlers.OnDisconnect;
 
+            MapEvent.AnnouncingScpTermination += OnDeniableEvent;
+            MapEvent.ChangingIntoGrenade += OnDeniableEvent;
             MapEvent.PlacingBlood += OnDeniableEvent;
+
             PlayerEvent.SpawningRagdoll += PlayerEventHandlers.OnSpawnRagdoll;
             PlayerEvent.IntercomSpeaking += OnDeniableEvent;
             PlayerEvent.DroppingItem += OnDeniableEvent;
@@ -53,8 +57,6 @@
             PlayerEvent.InteractingDoor += PlayerEventHandlers.OnInteractingDoor;
             PlayerEvent.InteractingElevator += OnDeniableEvent;
             PlayerEvent.InteractingLocker += OnDeniableEvent;
-            PlayerEvent.FlippingCoin += PlayerEventHandlers.OnCoinFlip;
-            MapEvent.ChangingIntoGrenade += OnDeniableEvent;
 
             Scp106Event.Teleporting += OnDeniableEvent;
 
@@ -70,9 +72,13 @@
             PlayerEvent.Dying -= PlayerEventHandlers.OnDying;
             PlayerEvent.Died -= PlayerEventHandlers.OnDied;
             PlayerEvent.TogglingNoClip -= PlayerEventHandlers.OnNoclip;
-            PlayerEvent.Escaping -= PlayerEventHandlers.OnEscape;
+            PlayerEvent.Escaping -= OnDeniableEvent;
+            PlayerEvent.Left -= PlayerEventHandlers.OnDisconnect;
 
+            MapEvent.AnnouncingScpTermination -= OnDeniableEvent;
+            MapEvent.ChangingIntoGrenade -= OnDeniableEvent;
             MapEvent.PlacingBlood -= OnDeniableEvent;
+
             PlayerEvent.SpawningRagdoll -= PlayerEventHandlers.OnSpawnRagdoll;
             PlayerEvent.IntercomSpeaking -= OnDeniableEvent;
             PlayerEvent.DroppingItem -= OnDeniableEvent;
@@ -80,8 +86,6 @@
             PlayerEvent.InteractingDoor -= PlayerEventHandlers.OnInteractingDoor;
             PlayerEvent.InteractingElevator -= OnDeniableEvent;
             PlayerEvent.InteractingLocker -= OnDeniableEvent;
-            PlayerEvent.FlippingCoin -= PlayerEventHandlers.OnCoinFlip;
-            MapEvent.ChangingIntoGrenade -= OnDeniableEvent;
 
             Scp106Event.Teleporting -= OnDeniableEvent;
 

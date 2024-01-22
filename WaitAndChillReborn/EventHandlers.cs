@@ -12,9 +12,31 @@
     using Player = Exiled.API.Features.Player;
     using Exiled.API.Features;
     using Exiled.API.Features.Roles;
+    using System.Collections.Generic;
+    using System.Linq;
 
     internal static class EventHandlers
     {
+
+        public static void ForceStart()
+        {
+            foreach (Player player in Player.List)
+            {
+                if (player.IsAlive)
+                {
+                    player.Role.Set(PlayerRoles.RoleTypeId.Spectator);
+                }
+            }
+
+            if (ReadyCheckHandle.IsRunning)
+            {
+                Timing.KillCoroutines(ReadyCheckHandle);
+            }
+
+            Round.IsLobbyLocked = false;
+            Timing.CallDelayed(2f, () => { CharacterClassManager.ForceRoundStart(); });
+        }
+
         public static void OnRoundPrepare()
         {
             foreach (BaseLobbyRoom room in LobbyAvailableRooms)
@@ -42,7 +64,7 @@
                 LobbyTimer = Timing.RunCoroutine(Methods.LobbyTimer());
 
             if (Config.UseReadyCheck)
-                ReadyCheckHandle = Timing.RunCoroutine(ReadyCheckHandler.ReadyCheck());
+                ReadyCheckHandle = Timing.RunCoroutine(ReadyCheck());
 
             Log.Warn("Clear turned players");
             Scp173Role.TurnedPlayers.Clear();
@@ -131,7 +153,7 @@
 
             foreach (Ragdoll ragdoll in Ragdoll.List)
             {
-                if (ragdoll.Owner != null)
+                if (!string.IsNullOrWhiteSpace(ragdoll.Nickname))
                     ragdoll.Destroy();
             }
 
@@ -142,6 +164,23 @@
             }
 
             Reset();
+        }
+
+        public static IEnumerator<float> ReadyCheck()
+        {
+            while (!Round.IsStarted)
+            {
+                int numPlayers = validPlayers.Count;
+
+                if (numPlayers > 0)
+                {
+                    List<Player> ready = ReadyPlayers.Intersect(validPlayers).ToList();
+                    IsReadyToStartGame = Config.ReadyCheckPercent <= ready.Count * 100 / numPlayers;
+                    Round.IsLobbyLocked = !IsReadyToStartGame;
+                }
+
+                yield return Timing.WaitForSeconds(1f);
+            }
         }
     }
 }

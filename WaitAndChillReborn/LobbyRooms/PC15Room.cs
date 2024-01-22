@@ -24,7 +24,7 @@
         {
             base.OnPlayerSpawn(player);
 
-            if (player.CurrentRoom.Type != RoomType)
+            if (player?.CurrentRoom?.Type != RoomType)
             {
                 // The door's forward direction does not always point into the room.
                 // This process appears seamless enough to the player, it shouldn't be jarring.
