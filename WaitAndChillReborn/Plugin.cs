@@ -31,6 +31,7 @@
         {
             UnRegisterEvents();
             Singleton = null;
+            _harmony.UnpatchAll();
             base.OnDisabled();
         }
 
