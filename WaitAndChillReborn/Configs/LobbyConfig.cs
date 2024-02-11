@@ -1,4 +1,4 @@
-﻿namespace WaitAndChillReborn.Configs
+namespace WaitAndChillReborn.Configs
 {
     using Exiled.API.Enums;
     using System.Collections.Generic;

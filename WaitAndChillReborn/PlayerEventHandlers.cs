@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using Exiled.API.Enums;
     using Exiled.API.Extensions;
     using Exiled.API.Features;
@@ -15,6 +16,24 @@
 
     internal static class PlayerEventHandlers
     {
+        const string Ready = "<color=#32CD32>Ready</color>";
+        const string readyString = @"( - )?<color=#32CD32>Ready</color>";
+        static readonly Regex nameRegex = new(readyString, RegexOptions.IgnoreCase);
+        public static void ensureReadyInName(Player p)
+        {
+            if (!nameRegex.Match(p.CustomInfo ?? "").Success)
+            {
+                if (string.IsNullOrWhiteSpace(p.CustomInfo))
+                    p.CustomInfo = Ready;
+                else
+                    p.CustomInfo += $" - {Ready}";
+            }
+        }
+        public static void removeReadyInName(Player p)
+        {
+            p.CustomInfo = nameRegex.Replace(p.CustomInfo ?? "", "");
+        }
+
         public static void OnDisconnect(LeftEventArgs ev)
         {
             if (!IsLobby)
@@ -32,10 +51,12 @@
             if (ReadyPlayers.Contains(ev.Player))
             {
                 ReadyPlayers.Remove(ev.Player);
+                removeReadyInName(ev.Player);
             }
             else
             {
                 ReadyPlayers.Add(ev.Player);
+                ensureReadyInName(ev.Player);
             }
         }
 
@@ -115,6 +136,11 @@
             _givePlayerEffectsAndItems(ev.Player, Config.SpawnDelay);
             Exiled.CustomItems.API.Extensions.ResetInventory(ev.Player, Config.Inventory);
             LobbyAvailableRooms.RandomItem().OnPlayerSpawn(ev.Player);
+
+            if (ReadyPlayers.Contains(ev.Player))
+            {
+                ensureReadyInName(ev.Player);
+            }
         }
 
         public static void OnDying(DyingEventArgs ev)

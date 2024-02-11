@@ -114,6 +114,7 @@
             {
                 player.DisableAllEffects();
                 PlayerRoles.Voice.Intercom.TrySetOverride(player.ReferenceHub, false);
+                PlayerEventHandlers.removeReadyInName(player);
             }
 
             if (Server.FriendlyFire)
