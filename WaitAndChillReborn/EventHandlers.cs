@@ -146,16 +146,19 @@
                         // ignored
                     }
                 }
-                else
+                else if (Config.CleanupPickups)
                 {
                     pickup.Destroy();
                 }
             }
 
-            foreach (Ragdoll ragdoll in Ragdoll.List)
+            if (Config.CleanupRagdolls)
             {
-                if (!string.IsNullOrWhiteSpace(ragdoll.Nickname))
-                    ragdoll.Destroy();
+                foreach (Ragdoll ragdoll in Ragdoll.List)
+                {
+                    if (!string.IsNullOrWhiteSpace(ragdoll.Nickname))
+                        ragdoll.Destroy();
+                }
             }
 
             if (Config.TurnedPlayers)

@@ -106,5 +106,8 @@ namespace WaitAndChillReborn.Configs
         {
             { EffectType.MovementBoost, 50 },
         };
+
+        public bool CleanupPickups { get; private set; } = false;
+        public bool CleanupRagdolls { get; private set; } = false;
     }
 }
