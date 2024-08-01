@@ -21,6 +21,8 @@
 
         public static readonly HashSet<Pickup> LockedPickups = new();
 
+        public static readonly HashSet<Ragdoll> LockedRagdolls = new();
+
         public static int spawnedRagdollsFor3114 = 0;
 
         #region Ready Check
@@ -55,6 +57,8 @@
         {
             LobbyAvailableRooms.Clear();
             AllowedInteractableDoors.Clear();
+            LockedRagdolls.Clear();
+            LockedPickups.Clear();
             IsReadyToStartGame = false;
             ReadyPlayers = new();
             Round.KillsByScp = 0;

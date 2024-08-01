@@ -95,6 +95,11 @@
                             // ignored
                         }
                     }
+
+                    foreach (Ragdoll ragdoll in Ragdoll.List)
+                    {
+                        LockedRagdolls.Add(ragdoll);
+                    }
                 });
         }
 
@@ -156,8 +161,10 @@
             {
                 foreach (Ragdoll ragdoll in Ragdoll.List)
                 {
-                    if (!string.IsNullOrWhiteSpace(ragdoll.Nickname))
+                    if (!LockedRagdolls.Contains(ragdoll))
+                    {
                         ragdoll.Destroy();
+                    }
                 }
             }
 
