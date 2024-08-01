@@ -56,14 +56,14 @@ namespace WaitAndChillReborn.API
             return Values[index++];
         }
 
-        public T GetNext(Func<T, bool> predicate)
+        public T GetNext(Func<T, bool> predicate, T defaultItem = default)
         {
             int startIndex = index;
             while (true)
             {
                 T next = GetNext();
                 if (predicate(next)) return next;
-                if (index == startIndex) return default;
+                if (index == startIndex) return defaultItem;
             }
         }
 

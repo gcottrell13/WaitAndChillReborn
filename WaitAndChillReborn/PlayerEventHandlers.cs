@@ -13,6 +13,7 @@
     using MEC;
     using PlayerRoles;
     using static API.API;
+    using Log = Exiled.API.Features.Log;
 
     internal static class PlayerEventHandlers
     {
@@ -111,7 +112,7 @@
                     Config.SpawnDelay,
                     () =>
                     {
-                        ev.Player.Role.Set(RolesToChoose.GetNext());
+                        SetNextRole(ev.Player);
 
                         if (Config.TurnedPlayers)
                         {
@@ -159,28 +160,7 @@
             if (LobbyAvailableRooms.Count == 0)
                 return;
 
-            Timing.CallDelayed(Config.SpawnDelay, () =>
-            {
-                ItemPool<RoleTypeId> rolePool = RolesToChoose;
-
-                if (Config.UniqueScps)
-                {
-                    RoleTypeId role = rolePool.GetNext(role =>
-                    {
-                        if (PlayerRolesUtils.GetTeam(role) == Team.SCPs && Player.List.Any(player => player.Role.Type == role))
-                        {
-                            return false;
-                        }
-                        return true;
-                    });
-                    ev.Player.Role.Set(role);
-                }
-                else
-                {
-                    RoleTypeId role = rolePool.GetNext();
-                    ev.Player.Role.Set(role);
-                }
-            });
+            Timing.CallDelayed(Config.SpawnDelay, () => SetNextRole(ev.Player));
         }
 
         public static void _givePlayerEffectsAndItems(Player player, float delay)
@@ -201,6 +181,32 @@
                     foreach (KeyValuePair<AmmoType, ushort> ammo in Config.Ammo)
                         player.Ammo[ammo.Key.GetItemType()] = ammo.Value;
                 });
+        }
+
+        public static void SetNextRole(Player player)
+        {
+            if (!player.IsConnected)
+                return;
+
+            ItemPool<RoleTypeId> rolePool = RolesToChoose;
+
+            if (Config.UniqueScps)
+            {
+                RoleTypeId role = rolePool.GetNext(role =>
+                {
+                    if (PlayerRolesUtils.GetTeam(role) == Team.SCPs && Player.List.Any(player => player.Role.Type == role))
+                    {
+                        return false;
+                    }
+                    return true;
+                }, RoleTypeId.Tutorial);
+                player.Role.Set(role);
+            }
+            else
+            {
+                RoleTypeId role = rolePool.GetNext();
+                player.Role.Set(role);
+            }
         }
     }
 }
